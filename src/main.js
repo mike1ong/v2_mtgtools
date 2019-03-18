@@ -10,6 +10,7 @@ fly.config.baseURL = 'https://www.mtgtools.cn'
 Vue.prototype.$http = fly
 Vue.use(MpvueRouterPatch)
 Vue.config.productionTip = false
+Vue.prototype.$store = store
 
 const app = new Vue({
   mpType: 'app',

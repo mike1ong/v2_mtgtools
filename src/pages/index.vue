@@ -6,12 +6,16 @@
 </template>
 
 <script>
+import mta from '../utils/mta_analysis'
 export default {
   mpType: 'page',
   config: {
     usingComponents: {
       'i-button': '../../static/iview/button/index'
     }
+  },
+  onLoad () {
+    mta.Page.init()
   },
   data () {
     return {
@@ -28,7 +32,13 @@ export default {
       // }).then(res => {
       //   console.log(res)
       // })
-      console.log('clickHandle:', msg, ev)
+
+      if (this.$store.state.lang === 'cn') {
+        this.$store.commit('switchLang', 'en')
+      } else {
+        this.$store.commit('switchLang', 'cn')
+      }
+      this.$i18n.locale = this.$store.state.lang
     }
   },
   computed: {
