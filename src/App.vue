@@ -1,5 +1,8 @@
 <script>
+import Vue from 'vue'
 import mta from './utils/mta_analysis'
+import store from '@/store'
+var Fly = require('flyio/dist/npm/wx')
 export default {
   created () {
     console.log('app created and cache logs by setStorageSync')
@@ -14,6 +17,13 @@ export default {
   beforeDestroy () { console.log('beforeDestroy') },
   destroyed () { console.log('destroyed') },
   onLaunch (opt) {
+    console.log('launch')
+    // vue
+    var fly = new Fly()
+    fly.config.baseURL = 'https://www.mtgtools.cn'
+    Vue.prototype.$http = fly
+    Vue.prototype.$store = store
+    // mta
     mta.App.init({
       'appID': '500674033',
       'eventID': '500674678',
@@ -22,7 +32,15 @@ export default {
       'statShareApp': true,
       'statReachBottom': true
     })
-    console.log('launch')
+    // getsysteminfo
+    let res = this.$store.state.sysinfo
+    if (!res) {
+      res = wx.getSystemInfoSync()
+      this.$store.commit('setSysinfo', res)
+    }
+    // getlang
+    let lang = this.$store.state.lang || res.language || 'zh'
+    this.$i18n.locale = lang
   }
 }
 </script>

@@ -11,10 +11,12 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "eslint-plugin-vue": "^5.2.2",
     "flyio": "^0.6.14",
     "mpvue": "^1.0.0",
     "vue-i18n": "^8.9.0",
-    "vuex": "^3.0.0"
+    "vuex": "^3.0.0",
+    "vuex-persistedstate": "^2.5.4"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

@@ -10,19 +10,41 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     lang: 'cn',
-    count: 0
+    sysinfo: null
   },
   mutations: {
-    increment: (state) => {
-      const obj = state
-      obj.count += 1
-    },
-    decrement: (state) => {
-      const obj = state
-      obj.count -= 1
-    },
     switchLang: (state, lang) => {
       state.lang = lang
+    },
+    setSysinfo: (state, res) => {
+      let param = {
+        rHeight: 45,
+        rMar: 2.5,
+        rW: 110
+      }
+      if (res.system.substring(0, 3) === 'iOS') {
+        param.rHeight = 40
+        param.rMar = 0.5
+        param.rW = 100
+      }
+      state.sysinfo = {
+        pixelRatio: res.pixelRatio, // 系统像素比
+        statusBarHeight: res.statusBarHeight, // 系统状态栏高度
+        navHeight: res.pixelRatio * param.rHeight / res.pixelRatio, // 顶部导航栏高度
+        headAreaHeight: res.pixelRatio * 35 / res.pixelRatio, // 顶部内容区域高度
+        headAreaMarTop: res.pixelRatio * param.rMar / res.pixelRatio, // 顶部内容区域外边距
+        headleftBoxW: res.windowWidth - res.pixelRatio * param.rW / res.pixelRatio, // 顶部内容左侧区域外边距
+        headRightBoxW: res.pixelRatio * param.rW / res.pixelRatio, // 顶部内容右侧区域外边距
+        containersHeight: res.windowHeight - (res.statusBarHeight + res.pixelRatio * param.rHeight / res.pixelRatio), // 页面内容区域高度
+
+        SDKVersion: res.SDKVersion,
+        fontSizeSetting: res.fontSizeSetting,
+        language: res.language,
+        model: res.model,
+        platform: res.platform,
+        system: res.system,
+        version: res.version
+      }
     }
   },
   plugins: [
