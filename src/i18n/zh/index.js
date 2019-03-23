@@ -1,7 +1,8 @@
 export default {
   pub: {
-    pageHeader: {
-      hello: '你好'
+    index: {
+      searchBarHint: '你好',
+      switchLang: '切换语言'
     }
   }
 }

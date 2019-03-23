@@ -1,6 +1,10 @@
 {
   "pages": [
-    "pages/index"
+    "pages/index",
+    {
+      "path": "judge/deckcounter",
+      "subPackage": true
+    }
   ],
   "window": {
     "backgroundTextStyle": "light",

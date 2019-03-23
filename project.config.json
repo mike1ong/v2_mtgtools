@@ -11,7 +11,7 @@
 	"compileType": "miniprogram",
 	"appid": "wx6e600ea6c4121cf7",
 	"projectname": "mtgtools.v2",
-	"libVersion": "2.0.1",
+	"libVersion": "2.0.2",
 	"condition": {
 		"search": {
 			"current": -1,

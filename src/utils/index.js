@@ -3,6 +3,13 @@ function formatNumber (n) {
   return str[1] ? str : `0${str}`
 }
 
+function getCurrentPageUrl () {
+  var pages = getCurrentPages() // 获取加载的页面
+  var currentPage = pages[pages.length - 1] // 获取当前页面的对象
+  var url = currentPage.route // 当前页面url
+  return url
+}
+
 export function formatTime (date) {
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -20,5 +27,6 @@ export function formatTime (date) {
 
 export default {
   formatNumber,
-  formatTime
+  formatTime,
+  getCurrentPageUrl
 }

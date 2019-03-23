@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import mta from './utils/mta_analysis'
 import store from '@/store'
+import './style/iconfont.css'
 var Fly = require('flyio/dist/npm/wx')
 export default {
   created () {
@@ -40,6 +41,9 @@ export default {
     }
     // getlang
     let lang = this.$store.state.lang || res.language || 'zh'
+    if (lang !== 'en') {
+      lang = 'zh'
+    }
     this.$i18n.locale = lang
   }
 }
@@ -54,6 +58,14 @@ export default {
   justify-content: space-between;
   padding: 200rpx 0;
   box-sizing: border-box;
+}
+.iconfont {
+  font-size: 24px;
+  color: #f0f0f0;
+}
+.avataricon {
+  margin-left: 10px;
+  margin-top: 5px;
 }
 /* this rule will be remove */
 * {

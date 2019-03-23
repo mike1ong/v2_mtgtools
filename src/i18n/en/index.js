@@ -1,7 +1,8 @@
 export default {
   pub: {
-    pageHeader: {
-      hello: 'Hello'
+    index: {
+      searchBarHint: 'Hello',
+      switchLang: 'Switch language'
     }
   }
 }
