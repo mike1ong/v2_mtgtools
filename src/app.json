@@ -2,7 +2,18 @@
   "pages": [
     "pages/index",
     {
-      "path": "subpackage/judge/deckcounter",
+      "root": "subpackage/judge",
+      "path": "subpackage/judge/deckcounter",      
+      "subPackage": true
+    },
+    {
+      "root": "subpackage/judge",
+      "path": "subpackage/judge/suspendedplayer",
+      "subPackage": true
+    },
+    {
+      "root": "subpackage/cards",
+      "path": "subpackage/cards/cards",
       "subPackage": true
     }
   ],

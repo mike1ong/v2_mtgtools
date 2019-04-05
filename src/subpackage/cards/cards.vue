@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     addNum (event) {
-      var i = parseInt(event.mp.detail.num, 10)
+      var i = parseInt(event.target.dataset.num, 10)
       this.operTotal += i
       this.operList.push(i)
       if (this.operTotal === 60) {
@@ -67,7 +67,7 @@ export default {
       this.scrolltop = this.operList.length * 100
     },
     doFunc (event) {
-      if (event.mp.detail.func === 'reset') {
+      if (event.target.dataset.func === 'reset') {
         this.operTotal = 0
         this.operList = []
       } else {

@@ -5,8 +5,17 @@ export default {
       switchLang: 'Switch language'
     },
     common: {
+      confirm: 'Confirm',
+      cancel: 'Cancel',
+      search: 'Search',
       reset: 'Reset',
-      revert: 'Revert'
+      revert: 'Revert',
+      version: 'Version'
+    },
+    suspendedplayer: {
+      placeholder: 'Search',
+      lastupdate: 'Lastest update',
+      revision: 'Revision'
     }
   }
 }

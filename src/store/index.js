@@ -13,7 +13,8 @@ const store = new Vuex.Store({
     sysinfo: null,
     userinfo: {
       openid: ''
-    }
+    },
+    suspenddci: 'China'
   },
   mutations: {
     switchLang: (state, lang) => {
@@ -51,6 +52,9 @@ const store = new Vuex.Store({
     },
     setUserInfo: (state, userinfo) => {
       state.userinfo = userinfo
+    },
+    setSuspenddci: (state, keyword) => {
+      state.suspenddci = keyword
     }
   },
   plugins: [
