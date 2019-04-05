@@ -9,8 +9,11 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    lang: 'cn',
-    sysinfo: null
+    lang: 'zh',
+    sysinfo: null,
+    userinfo: {
+      openid: ''
+    }
   },
   mutations: {
     switchLang: (state, lang) => {
@@ -30,13 +33,13 @@ const store = new Vuex.Store({
       state.sysinfo = {
         pixelRatio: res.pixelRatio, // 系统像素比
         statusBarHeight: res.statusBarHeight, // 系统状态栏高度
+        windowHeight: res.windowHeight,
         navHeight: res.pixelRatio * param.rHeight / res.pixelRatio, // 顶部导航栏高度
         headAreaHeight: res.pixelRatio * 35 / res.pixelRatio, // 顶部内容区域高度
         headAreaMarTop: res.pixelRatio * param.rMar / res.pixelRatio, // 顶部内容区域外边距
         headleftBoxW: res.windowWidth - res.pixelRatio * param.rW / res.pixelRatio, // 顶部内容左侧区域外边距
         headRightBoxW: res.pixelRatio * param.rW / res.pixelRatio, // 顶部内容右侧区域外边距
         containersHeight: res.windowHeight - (res.statusBarHeight + res.pixelRatio * param.rHeight / res.pixelRatio), // 页面内容区域高度
-
         SDKVersion: res.SDKVersion,
         fontSizeSetting: res.fontSizeSetting,
         language: res.language,
@@ -45,6 +48,9 @@ const store = new Vuex.Store({
         system: res.system,
         version: res.version
       }
+    },
+    setUserInfo: (state, userinfo) => {
+      state.userinfo = userinfo
     }
   },
   plugins: [

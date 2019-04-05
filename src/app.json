@@ -2,7 +2,7 @@
   "pages": [
     "pages/index",
     {
-      "path": "judge/deckcounter",
+      "path": "subpackage/judge/deckcounter",
       "subPackage": true
     }
   ],
@@ -10,7 +10,7 @@
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "WeChat",
-    "navigationBarTextStyle": "black",
+    "navigationBarTextStyle": "white",
     "navigationStyle": "custom"
   }
 }

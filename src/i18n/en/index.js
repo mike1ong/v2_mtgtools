@@ -3,6 +3,10 @@ export default {
     index: {
       searchBarHint: 'Hello',
       switchLang: 'Switch language'
+    },
+    common: {
+      reset: 'Reset',
+      revert: 'Revert'
     }
   }
 }

@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import mta from './utils/mta_analysis'
 import store from '@/store'
+import { openSocket, doRequest } from './utils/websocket'
 import './style/iconfont.css'
 var Fly = require('flyio/dist/npm/wx')
 export default {
@@ -45,11 +46,75 @@ export default {
       lang = 'zh'
     }
     this.$i18n.locale = lang
+    // updateManager
+    const updateManager = wx.getUpdateManager()
+    updateManager.onCheckForUpdate(function (res) {
+      // 请求完新版本信息的回调
+      console.log(res)
+    })
+    updateManager.onUpdateReady(function () {
+      wx.showModal({
+        title: '更新提示',
+        content: '新版本已经准备好，是否重启应用？',
+        success (res) {
+          if (res.confirm) {
+            // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+            updateManager.applyUpdate()
+          }
+        }
+      })
+    })
+    updateManager.onUpdateFailed(function (err) {
+      // 新版本下载失败
+      console.log(err)
+    })
+    // websocket
+    let checkSession = (userinfo) => {
+      return new Promise(function (resolve, reject) {
+        wx.checkSession({
+          success () {
+            doRequest('login', {
+              from: 'miniapp',
+              openid: userinfo.openid
+            })
+            resolve(true)
+          },
+          fail () {
+            resolve(false)
+          }
+        })
+      })
+    }
+
+    openSocket(async () => {
+      let store = this.$store
+      let userinfo = store.state.userinfo
+      if (userinfo.openid) {
+        if (await checkSession(userinfo)) {
+          return
+        }
+      }
+      wx.login({
+        success (res) {
+          doRequest('genSession', {
+            from: 'miniapp',
+            code: res.code
+          }, (result) => {
+            userinfo.openid = result.openid
+            store.commit('setUserInfo', userinfo)
+          })
+        }
+      })
+    })
   }
 }
 </script>
 
 <style>
+page {
+  height: 100%;
+  width: 100%;
+}
 .container {
   height: 100%;
   display: flex;

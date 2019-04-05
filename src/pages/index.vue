@@ -1,14 +1,14 @@
 <template>
   <div class="bodydiv">
-    <mtHeader color="#353535" :showIcon="true">
+    <mtHeader color="#353535" :showIcon="false">
       <template slot="body">
         <div class="logodiv">
-          <img mode="widthFix" class="logopic" src="../../static/img/logo.png"/>
+          <img class="logopic" src="../../static/img/logo.png"/>
         </div>
       </template>      
     </mtHeader>
     <div style="display:flex; justify-content: center;">
-      <input class="searchbar" :placeholder="t.index.searchBarHint" /> 
+      <input class="searchbar" :placeholder="t.index.searchBarHint" />
     </div>
     <div style="background-color: #fff; margin-top:10px;">
       <i-grid>
@@ -19,15 +19,15 @@
             </i-grid-icon>
             <i-grid-label>Grid</i-grid-label>
         </i-grid-item>
-        <i-grid-item @click="test">
-            <i-grid-icon @click="test">
-              <span class="iconfont gridicon icon-user" @click="test"></span>
+        <i-grid-item @click.stop="test">
+            <i-grid-icon @click.stop="test">
+              <span class="iconfont gridicon icon-user" @click.stop="test"></span>
             </i-grid-icon>
-            <i-grid-label  @click="test">Grid</i-grid-label>
+            <i-grid-label @click.stop="test">Grid</i-grid-label>
         </i-grid-item>
         <i-grid-item>
             <i-grid-icon>
-              <span class="iconfont gridicon icon-user"></span>
+              <i class="ms ms-2b ms-cost"></i> 
             </i-grid-icon>
             <i-grid-label>Grid</i-grid-label>
         </i-grid-item>
@@ -95,7 +95,46 @@
             <i-grid-label>Grid</i-grid-label>
         </i-grid-item>
       </i-grid>
-
+      <i-grid>
+        <i-grid-item>
+            <i-grid-icon>
+              <span class="iconfont gridicon icon-user"></span>
+            </i-grid-icon>
+            <i-grid-label>Grid</i-grid-label>
+        </i-grid-item>
+        <i-grid-item>
+            <i-grid-icon>
+              <span class="iconfont gridicon icon-user"></span>
+            </i-grid-icon>
+            <i-grid-label>Grid</i-grid-label>
+        </i-grid-item>
+        <i-grid-item>
+            <i-grid-icon>
+              <span class="iconfont gridicon icon-user"></span>
+            </i-grid-icon>
+            <i-grid-label>Grid</i-grid-label>
+        </i-grid-item>
+      </i-grid>
+      <i-grid>
+        <i-grid-item>
+            <i-grid-icon>
+              <span class="iconfont gridicon icon-user"></span>
+            </i-grid-icon>
+            <i-grid-label>Grid</i-grid-label>
+        </i-grid-item>
+        <i-grid-item>
+            <i-grid-icon>
+              <span class="iconfont gridicon icon-user"></span>
+            </i-grid-icon>
+            <i-grid-label>Grid</i-grid-label>
+        </i-grid-item>
+        <i-grid-item>
+            <i-grid-icon>
+              <span class="iconfont gridicon icon-user"></span>
+            </i-grid-icon>
+            <i-grid-label>Grid</i-grid-label>
+        </i-grid-item>
+      </i-grid>
     </div>
 
   </div>  
@@ -134,8 +173,7 @@ export default {
   },
   methods: {
     test () {
-      console.log('hi')
-      wx.navigateTo({url: '/judge/deckcounter'})
+      wx.navigateTo({url: '/subpackage/judge/deckcounter'})
     }
   }
 }
@@ -146,7 +184,6 @@ export default {
   display: flex;
   flex-direction: column;
   background-color: #353535;
-  height: 100%;
 }
 .logodiv {
   display: flex;
@@ -155,7 +192,8 @@ export default {
   padding-top: 10px;
 }
 .logopic {
-  width: 80%;
+  width: 240px;
+  height: 120px;
 }
 .searchbar {
   background-color: #fff;

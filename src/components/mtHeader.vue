@@ -1,27 +1,33 @@
 <template>
-  <div class="frameContainers">    
-    <header class="headNav" :style="{ paddingTop: sysinfo.statusBarHeight + 'px', height: sysinfo.navHeight + 'px', 'background-color': color }">
-      <section class="headArea" :style="{ height: sysinfo.headAreaHeight + 'px', marginTop: sysinfo.headAreaMarTop + 'px', 'background-color': color }">
-        <div class='leftBox' :style="{ 'background-color': color }">
-          <span v-if="hasReturn" @click="doReturn" class="iconfont avataricon icon-return"></span>
-          <span v-if="showIcon" @click="showMenu" class="iconfont avataricon icon-menu1"></span>
-          <span class="iconfont avataricon icon-user"></span>
-          <span class="iconfont avataricon icon-xinxi-fill"></span>
-          <span class="iconfont avataricon icon-svgglobalselect" @click="showLang"></span>      
-        </div>
-        <div class='rightBox' :style="{ 'flex-basis': sysinfo.headRightBoxW + 'px' }"></div>
-      </section>
-    </header>
+  <div class="frameContainers">
+    <!-- 顶部占位 -->
+    <div class="headArea" :style="{ height: sysinfo.headAreaMarTop + sysinfo.statusBarHeight +'px', 'background-color': color }"></div>
+    <!-- 全局header -->
+    <section class="headArea" :style="{ height: sysinfo.headAreaHeight + 10 + 'px', marginTop: sysinfo.headAreaMarTop + sysinfo.statusBarHeight+ 'px', 'background-color': color }">
+      <div class='leftBox' :style="{ 'background-color': color }">
+        <span v-if="hasReturn" @click="doReturn" class="iconfont avataricon icon-return"></span>
+        <span v-if="showIcon" @click="showMenu" class="iconfont avataricon icon-menu1"></span>
+        <span class="iconfont avataricon icon-user"></span>
+        <span v-if="isLogin" class="iconfont avataricon icon-xinxi-fill"></span>
+        <span class="iconfont avataricon icon-svgglobalselect" @click="showLang"></span>      
+      </div>
+      <div class='rightBox' :style="{ 'flex-basis': sysinfo.headRightBoxW + 'px' }"></div>
+    </section>
+    <!-- 顶部扩充器 -->
+    <div :style="{ height: sysinfo.headAreaHeight + 10 +'px', marginTop: sysinfo.headAreaMarTop + sysinfo.statusBarHeight+ 'px', 'background-color': color }"></div>
+    <!-- 实际内容开始部分 -->
     <slot name="body"></slot>
+    <!-- 抽屉部分 -->
     <i-drawer mode="left" :visible="vismenu" @close="vismenu=false">
       <div class="demo-container">
           单击遮罩层关闭
       </div>
     </i-drawer>
+    <!-- 语言切换部分 -->
     <i-action-sheet :visible="vislang" :actions="lstLang" show-cancel @cancel="vislang=false" @clickitem="onClickItem" mask-closable>
-    <view slot="header" style="padding: 16px">
-        <view style="color: #444;font-size: 16px">{{ t.index.switchLang }}</view>
-    </view>
+      <view slot="header" style="padding: 16px">
+          <view style="color: #444;font-size: 16px">{{ t.index.switchLang }}</view>
+      </view>
     </i-action-sheet>
   </div>
 </template>
@@ -39,10 +45,13 @@ export default {
   },
   computed: {
     ...mapState([
-      'sysinfo'
+      'sysinfo', 'userinfo'
     ]),
     hasReturn () {
       return getCurrentPages().length > 1
+    },
+    isLogin () {
+      return this.userinfo.dci !== ''
     },
     t () {
       return this.$t('pub')
@@ -50,10 +59,12 @@ export default {
   },
   methods: {
     showLang () {
-      this.vislang = true
+      this.vismenu = false
+      this.vislang = !this.vislang
     },
     showMenu () {
-      this.vismenu = true
+      this.vislang = false
+      this.vismenu = !this.vismenu
     },
     onClickItem (e) {
       let value = e.mp.detail.index || 0
@@ -71,24 +82,31 @@ export default {
     }
   },
   mounted () {
-    console.log(this.color)
+    // if (!this.userinfo.openid || !this.userinfo.sessionid || new Date().getTime() - this.userinfo.expireAt > 0) {
+    //   true || wx.login({
+    //     success: function (res) {
+    //       console.log(res)
+    //     }
+    //   })
+    // }
   }
 }
 </script>
 
 <style scope>
-.frameContainers {
-  width: 100%;
-  height: 100%;
-}
-
 .headNav {
   display: flex;
   align-items: center;
+  position:fixed;
 }
 .headArea {
   width: 100%;
   display: flex;
+  position:fixed;
+  z-index: 1000;
+}
+.headerSpace {
+  background-color: #fff;
 }
 .leftBox {
   display: flex;
