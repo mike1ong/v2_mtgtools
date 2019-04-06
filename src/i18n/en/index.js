@@ -10,7 +10,10 @@ export default {
       search: 'Search',
       reset: 'Reset',
       revert: 'Revert',
-      version: 'Version'
+      version: 'Version',
+      loading: 'Loading',
+      loaded: 'All data loaded',
+      nodata: 'no data'
     },
     suspendedplayer: {
       placeholder: 'Search',

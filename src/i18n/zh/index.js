@@ -10,7 +10,10 @@ export default {
       search: '搜索',
       reset: '重置',
       revert: '撤回',
-      version: '版本'
+      version: '版本',
+      loading: '加载中',
+      loaded: '加载完成',
+      nodata: '无数据'
     },
     suspendedplayer: {
       placeholder: '搜索',
