@@ -173,7 +173,7 @@ export default {
   },
   methods: {
     test () {
-      wx.navigateTo({url: '/subpackage/judge/suspendedplayer'})
+      wx.navigateTo({url: '/subpackage/judge/drafttimer'})
     }
   }
 }

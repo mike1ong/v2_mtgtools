@@ -5,15 +5,15 @@
     <i-notice-bar v-if="lasttime != ''">{{t.suspendedplayer.lastupdate}}: <wux-timeago :to="lasttime" :lang="lang"></wux-timeago></i-notice-bar>
     <div class="resultblock" v-for="(item, index) in resultList" :key="index">
       <div class="dciitem">
-        <i-row>
+        <i-row i-class="h20">
           <i-col span="8" offset="1">{{item.dciNo}}</i-col>
           <i-col span="7">{{item.startDate}}</i-col>
           <i-col span="7">{{item.endDate}}</i-col>        
         </i-row>
-        <i-row>
+        <i-row i-class="h20">
           <i-col span="22" offset="1">{{item.lastName}} {{item.firstName}}</i-col>
         </i-row>
-        <i-row>
+        <i-row i-class="h20">
           <i-col span="22" offset="1">{{item.country}} {{item.region}} {{item.city}}</i-col>
         </i-row>
       </div>
@@ -141,9 +141,6 @@ export default {
 </script>
 
 <style scope>
-page {
-  background-color: #EFEFF4;
-}
 .bodydiv {
   display: flex;
   flex-direction: column;
@@ -154,5 +151,8 @@ page {
   padding-top: 5px;
   padding-bottom: 5px;
   background-color: #fff;
+}
+.h20 {
+  height: 25px;
 }
 </style>

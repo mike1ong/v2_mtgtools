@@ -28,7 +28,8 @@
       <view slot="header" style="padding: 16px">
           <view style="color: #444;font-size: 16px">{{ t.index.switchLang }}</view>
       </view>
-    </i-action-sheet>
+    </i-action-sheet>    
+    <i-message id="message" :top="sysinfo.headAreaHeight + 10 + sysinfo.headAreaMarTop + sysinfo.statusBarHeight+'px'" />
   </div>
 </template>
 

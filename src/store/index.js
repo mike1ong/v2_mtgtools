@@ -14,7 +14,11 @@ const store = new Vuex.Store({
     userinfo: {
       openid: ''
     },
-    suspenddci: 'China'
+    suspenddci: 'China',
+    drafttimer: {
+      cardsPerPack: 14,
+      warnSeconds: 5
+    }
   },
   mutations: {
     switchLang: (state, lang) => {
@@ -55,6 +59,9 @@ const store = new Vuex.Store({
     },
     setSuspenddci: (state, keyword) => {
       state.suspenddci = keyword
+    },
+    setDraftTimer: (state, res) => {
+      state.drafttimer = res
     }
   },
   plugins: [

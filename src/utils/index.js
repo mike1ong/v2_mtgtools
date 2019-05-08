@@ -1,3 +1,4 @@
+import { $Message, $Toast } from '../../static/iview/base/index'
 function formatNumber (n) {
   const str = n.toString()
   return str[1] ? str : `0${str}`
@@ -10,7 +11,29 @@ function getCurrentPageUrl () {
   return url
 }
 
-export function formatTime (date) {
+function intToTime (i) {
+  var s = parseInt(i, 10)
+  var m = 0
+  var h = 0
+  var flag = s < 0
+  s = Math.abs(s)
+
+  if (s >= 60) {
+    m = parseInt(s / 60, 10)
+    s = parseInt(s % 60, 10)
+  }
+
+  if (m >= 60) {
+    h = parseInt(m / 60, 10)
+    m = parseInt(m % 60, 10)
+  }
+
+  var result = h > 0 ? formatNumber(h) + ':' : ''
+  result = result + formatNumber(m) + ':' + formatNumber(s)
+  return flag ? '-' + result : result
+}
+
+function formatTime (date) {
   const year = date.getFullYear()
   const month = date.getMonth() + 1
   const day = date.getDate()
@@ -25,8 +48,11 @@ export function formatTime (date) {
   return `${t1} ${t2}`
 }
 
-export default {
+export {
   formatNumber,
   formatTime,
-  getCurrentPageUrl
+  getCurrentPageUrl,
+  intToTime,
+  $Message as $msg,
+  $Toast as $toast
 }

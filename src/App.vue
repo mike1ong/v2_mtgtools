@@ -4,6 +4,7 @@ import mta from './utils/mta_analysis'
 import store from '@/store'
 import { openSocket, doRequest } from './utils/websocket'
 import './style/iconfont.css'
+import './style/common.css'
 var Fly = require('flyio/dist/npm/wx')
 export default {
   created () {
@@ -114,7 +115,8 @@ export default {
 page {
   height: 100%;
   width: 100%;
-  font-family: PingFangSC;
+  background-color: #EFEFF4;
+  font-family: Helvetica Neue,Helvetica,Roboto,Segoe UI,Arial,sans-serif;
   font-size: 16px;
 }
 .container {
@@ -133,6 +135,11 @@ page {
 .avataricon {
   margin-left: 10px;
   margin-top: 5px;
+}
+.flex-fullheight {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 /* this rule will be remove */
 * {

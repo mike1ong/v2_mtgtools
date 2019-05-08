@@ -3,12 +3,17 @@
     "pages/index",
     {
       "root": "subpackage/judge",
-      "path": "subpackage/judge/deckcounter",      
+      "path": "subpackage/judge/deckcounter",
       "subPackage": true
     },
     {
       "root": "subpackage/judge",
       "path": "subpackage/judge/suspendedplayer",
+      "subPackage": true
+    },
+    {
+      "root": "subpackage/judge",
+      "path": "subpackage/judge/drafttimer",
       "subPackage": true
     },
     {
