@@ -17,6 +17,11 @@
       "subPackage": true
     },
     {
+      "root": "subpackage/judge",
+      "path": "subpackage/judge/tiebreaker",
+      "subPackage": true
+    },
+    {
       "root": "subpackage/cards",
       "path": "subpackage/cards/cards",
       "subPackage": true

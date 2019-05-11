@@ -1,5 +1,5 @@
 <template>
-  <div class="bodydiv">
+  <div class="flex-fullheight">
     <mtHeader color="#353535" :showIcon="true"></mtHeader>
     <div class="upText">
       <scroll-view id="s_view" scroll-y="true" :scroll-top="scrolltop" >
@@ -24,7 +24,6 @@
 
 <script>
 import mta from '../../utils/mta_analysis'
-import { mapState } from 'vuex'
 import mtHeader from '@/components/mtHeader'
 
 export default {
@@ -37,9 +36,6 @@ export default {
     }
   },
   computed: {
-    ...mapState([
-      'sysinfo'
-    ]),
     t () {
       return this.$t('pub')
     }
@@ -83,11 +79,6 @@ export default {
 </script>
 
 <style scope>
-.bodydiv {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
 .btnGroup{
   display: flex;
   align-self: flex-end;
