@@ -21,7 +21,9 @@ export default {
       continue: 'Continue',
       finish: 'Finish',
       pause: 'Pause',
-      restart: 'Restart'
+      restart: 'Restart',
+      home: 'Home',
+      about: 'About'
     },
     suspendedplayer: {
       placeholder: 'Search',
@@ -50,8 +52,12 @@ export default {
       construct: 'You now have 25 minutes to register and construct your deck.',
       exitConfirmation: 'Are you sure to exit?',
       timeleft: '{0} seconds left!',
-      home: 'Home',
       packs: 'Pack {0}'
+    },
+    tiebreaker: {
+      title: 'TieBreaker',
+      standing: 'Standing',
+      pairing: 'Pairing'
     }
   }
 }

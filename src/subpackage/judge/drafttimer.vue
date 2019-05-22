@@ -162,7 +162,7 @@ export default {
       return intToTime(this.countdown)
     },
     actStep () {
-      return [{name: this.t.drafttimer.home}, {name: this.format(this.t.drafttimer.packs, 1)}, {name: this.format(this.t.drafttimer.packs, 2)}, {name: this.format(this.t.drafttimer.packs, 3)}]
+      return [{name: this.t.common.home}, {name: this.format(this.t.drafttimer.packs, 1)}, {name: this.format(this.t.drafttimer.packs, 2)}, {name: this.format(this.t.drafttimer.packs, 3)}]
     }
   },
   config: {

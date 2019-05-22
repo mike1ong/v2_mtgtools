@@ -112,40 +112,4 @@ export default {
 </script>
 
 <style>
-page {
-  height: 100%;
-  width: 100%;
-  background-color: #EFEFF4;
-  font-family: Helvetica Neue,Helvetica,Roboto,Segoe UI,Arial,sans-serif;
-  font-size: 16px;
-}
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 200rpx 0;
-  box-sizing: border-box;
-}
-.iconfont {
-  font-size: 24px;
-  color: #f0f0f0;
-}
-.avataricon {
-  margin-left: 10px;
-  margin-top: 5px;
-}
-.flex-fullheight {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-/* this rule will be remove */
-* {
-  transition: width 2s;
-  -moz-transition: width 2s;
-  -webkit-transition: width 2s;
-  -o-transition: width 2s;
-}
 </style>

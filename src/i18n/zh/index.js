@@ -21,7 +21,9 @@ export default {
       continue: '继续',
       finish: '完成',
       pause: '暂停',
-      restart: '重新开始'
+      restart: '重新开始',
+      home: '首页',
+      about: '关于'
     },
     suspendedplayer: {
       placeholder: '搜索',
@@ -50,8 +52,12 @@ export default {
       construct: '现在你有25分钟时间登记和构组你的套牌。',
       exitConfirmation: '即将重置计时器并返回主页，是否继续？',
       timeleft: '剩余{0}秒!',
-      home: '首页',
       packs: '第{0}包'
+    },
+    tiebreaker: {
+      title: '瑞士轮配对',
+      standing: '排名',
+      pairing: '配对'
     }
   }
 }
