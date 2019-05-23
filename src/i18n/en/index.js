@@ -22,8 +22,9 @@ export default {
       finish: 'Finish',
       pause: 'Pause',
       restart: 'Restart',
-      home: 'Home',
-      about: 'About'
+      home: '  　Home  　',
+      about: '  　About  　',
+      success: 'success'
     },
     suspendedplayer: {
       placeholder: 'Search',
@@ -56,8 +57,21 @@ export default {
     },
     tiebreaker: {
       title: 'TieBreaker',
-      standing: 'Standing',
-      pairing: 'Pairing'
+      description: 'A swiss pairing tool for casual games.',
+      standing: '  　Standing  　',
+      pairing: '  　Pairing  　',
+      addplayer: 'Add player：',
+      activeplayers: 'Active ',
+      addhis: 'Add history',
+      placeholder: 'player name',
+      enroll: 'Enroll',
+      endenroll: 'Enrollment Complete',
+      reset: 'Reset game',
+      fillplayer: 'Fill random players',
+      reservedname: 'This name is reserved.',
+      duplicatedname: 'Player exists',
+      resetConfirm: 'Reset confirmation',
+      resetDesc: 'Ready to reset pairings?'
     }
   }
 }

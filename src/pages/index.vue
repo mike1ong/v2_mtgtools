@@ -12,12 +12,12 @@
     </div>
     <div style="background-color: #fff; margin-top:10px;">
       <i-grid>
-        <i-grid-item>          
-            <i-grid-icon>
-              <span class="iconfont gridicon icon-user">
+        <i-grid-item @click.stop="test1">
+            <i-grid-icon @click.stop="test1">
+              <span class="iconfont gridicon icon-user" @click.stop="test1">
               </span>
             </i-grid-icon>
-            <i-grid-label>Grid</i-grid-label>
+            <i-grid-label @click.stop="test1">Grid</i-grid-label>
         </i-grid-item>
         <i-grid-item @click.stop="test">
             <i-grid-icon @click.stop="test">
@@ -172,6 +172,9 @@ export default {
     mtHeader
   },
   methods: {
+    test1 () {
+      wx.navigateTo({url: '/subpackage/judge/drafttimer'})
+    },
     test () {
       wx.navigateTo({url: '/subpackage/judge/tiebreaker'})
     }

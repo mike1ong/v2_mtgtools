@@ -18,6 +18,11 @@ const store = new Vuex.Store({
     drafttimer: {
       cardsPerPack: 14,
       warnSeconds: 5
+    },
+    tiebreaker: {
+      roundno: 0,
+      playerlist: [],
+      matchlist: []
     }
   },
   mutations: {
@@ -62,6 +67,9 @@ const store = new Vuex.Store({
     },
     setDraftTimer: (state, res) => {
       state.drafttimer = res
+    },
+    setTiebreaker: (state, res) => {
+      state.tiebreaker = res
     }
   },
   plugins: [

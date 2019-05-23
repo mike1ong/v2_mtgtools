@@ -22,8 +22,9 @@ export default {
       finish: '完成',
       pause: '暂停',
       restart: '重新开始',
-      home: '首页',
-      about: '关于'
+      home: '　  首页  　',
+      about: '　  关于  　',
+      success: '执行成功'
     },
     suspendedplayer: {
       placeholder: '搜索',
@@ -56,8 +57,21 @@ export default {
     },
     tiebreaker: {
       title: '瑞士轮配对',
-      standing: '排名',
-      pairing: '配对'
+      description: '可用于休闲赛事的瑞士轮配对工具',
+      standing: '　  排名  　',
+      pairing: '　  配对  　',
+      addplayer: '添加牌手：',
+      activeplayers: '当前人数',
+      addhis: '添加历史牌手',
+      placeholder: '请输入姓名',
+      enroll: '报名',
+      endenroll: '报名结束',
+      reset: '重置比赛',
+      fillplayer: '快速填充牌手',
+      reservedname: '系统保留名称无法使用',
+      duplicatedname: '此牌手已存在',
+      resetConfirm: '确认重置',
+      resetDesc: '清空所有数据？'
     }
   }
 }
