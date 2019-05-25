@@ -18,14 +18,19 @@
       </div>
       <input class="input_playername" :placeholder="t.tiebreaker.placeholder" :value="playerName" @input="onInput"/>
       <i-button type="primary" shape="circle" size="small" @click="onAddPlayer">{{t.tiebreaker.enroll}}</i-button>
-      <i-button type="ghost" shape="circle" size="small" @click="timerError">{{t.tiebreaker.fillplayer}}</i-button>
+      <i-button type="ghost" shape="circle" size="small" @click="onFillRandom">{{t.tiebreaker.fillplayer}}</i-button>
       <div class="flex-space"></div>
       <i-button type="primary"  size="small" @click="timerError">{{t.tiebreaker.endenroll}}</i-button>
       <i-button type="error"  size="small" @click="onReset">{{t.tiebreaker.reset}}</i-button>
     </div>   
 
-    <div class="tab-body" v-if="currentTab == 'tabPlayer'">
-      tabPlayer
+    <div v-if="currentTab == 'tabPlayer'">
+      <i-cell-group>
+        <i-cell v-for="(item, index) in tiebreaker.playerlist" :key="index" :title="'#'+ (index < 9 ? '0' + (index + 1) : (index + 1)) + ' ' +item.playerName + ' (9 Points)'"
+        is-link :value="'查看明细'" :label="'OMW:0.00 | PGW:0.00 | OGW:0.00'">
+
+        </i-cell>
+      </i-cell-group>
     </div>
 
     <div class="tab-body" v-if="currentTab == 'tabResult'">
@@ -406,7 +411,9 @@ export default {
       'i-tab': '../../../static/iview/tab/index',
       'i-button': '../../../static/iview/button/index',
       'i-modal': '../../../static/iview/modal/index',
-      'i-message': '../../../static/iview/message/index'
+      'i-message': '../../../static/iview/message/index',
+      'i-cell': '../../../static/iview/cell/index',
+      'i-cell-group': '../../../static/iview/cell-group/index'
     }
   },
   onLoad () {
@@ -421,6 +428,27 @@ export default {
     },
     onAddhis (e) {
       console.log(e)
+    },
+    onFillRandom (e) {
+      let name = this.t.common.player
+      for (let sno = 1; sno <= 8; sno++) {
+        let flag = false
+        let sname = name + ' ' + sno
+        for (let i = 0; i < this.tiebreaker.playerlist.length; i++) {
+          if (this.tiebreaker.playerlist[i].playerName.toLowerCase() === sname.toLowerCase()) {
+            flag = true
+            break
+          }
+        }
+        if (!flag) {
+          this.tiebreaker.playerlist.push(createPlayer(sname))
+        }
+      }
+      this.$store.commit('setTiebreaker', this.tiebreaker)
+      $msg({
+        content: this.t.common.success,
+        type: 'info'
+      })
     },
     onAddPlayer (e) {
       if (this.playerName) {

@@ -24,7 +24,8 @@ export default {
       restart: 'Restart',
       home: '  　Home  　',
       about: '  　About  　',
-      success: 'success'
+      success: 'success',
+      player: 'Player'
     },
     suspendedplayer: {
       placeholder: 'Search',

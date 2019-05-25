@@ -24,7 +24,8 @@ export default {
       restart: '重新开始',
       home: '　  首页  　',
       about: '　  关于  　',
-      success: '执行成功'
+      success: '执行成功',
+      player: '牌手'
     },
     suspendedplayer: {
       placeholder: '搜索',
