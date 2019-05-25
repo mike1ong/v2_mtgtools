@@ -25,7 +25,10 @@ export default {
       home: '　  首页  　',
       about: '　  关于  　',
       success: '执行成功',
-      player: '牌手'
+      player: '牌手',
+      details: '查看明细',
+      delete: '删除',
+      drop: '退赛'
     },
     suspendedplayer: {
       placeholder: '搜索',
@@ -64,15 +67,27 @@ export default {
       addplayer: '添加牌手：',
       activeplayers: '当前人数',
       addhis: '添加历史牌手',
+      nohis: '当前无历史牌手',
       placeholder: '请输入姓名',
       enroll: '报名',
       endenroll: '报名结束',
       reset: '重置比赛',
-      fillplayer: '快速填充牌手',
+      fillplayer: '快速填充8名牌手',
       reservedname: '系统保留名称无法使用',
       duplicatedname: '此牌手已存在',
       resetConfirm: '确认重置',
-      resetDesc: '清空所有数据？'
+      resetDesc: '清空所有数据？',
+      no_player_title: '当前没有参赛的牌手',
+      no_player_text: '请返回主页添加牌手',
+      deleteConfirm: '删除确认',
+      dropConfirm: '退赛确认',
+      confirmText: '此操作无法回退',
+      addSelected: '添加所选',
+      delSelected: '删除所选',
+      player_not_enough: '请至少添加4名牌手',
+      total_round_title: '录入局数',
+      total_round_desc: '请输入要进行的局数:',
+      invalid_total_round: '无效的局数设置'
     }
   }
 }

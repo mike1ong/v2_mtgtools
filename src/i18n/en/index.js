@@ -25,7 +25,10 @@ export default {
       home: '  　Home  　',
       about: '  　About  　',
       success: 'success',
-      player: 'Player'
+      player: 'Player',
+      details: 'Detail',
+      delete: 'Delete',
+      drop: 'Drop'
     },
     suspendedplayer: {
       placeholder: 'Search',
@@ -61,18 +64,30 @@ export default {
       description: 'A swiss pairing tool for casual games.',
       standing: '  　Standing  　',
       pairing: '  　Pairing  　',
-      addplayer: 'Add player：',
+      addplayer: 'Enroll player：',
       activeplayers: 'Active ',
-      addhis: 'Add history',
+      addhis: 'Select player',
+      nohis: 'No history players found',
       placeholder: 'player name',
       enroll: 'Enroll',
       endenroll: 'Enrollment Complete',
       reset: 'Reset game',
-      fillplayer: 'Fill random players',
+      fillplayer: 'Fill 8 random players',
       reservedname: 'This name is reserved.',
       duplicatedname: 'Player exists',
       resetConfirm: 'Reset confirmation',
-      resetDesc: 'Ready to reset pairings?'
+      resetDesc: 'Ready to reset pairings?',
+      no_player_title: 'No player enrolled',
+      no_player_text: 'Please enroll player first.',
+      deleteConfirm: 'Delete Confirmation',
+      dropConfirm: 'Drop Confirmation',
+      confirmText: 'this operation can\'t be reversed',
+      addSelected: 'Add selected',
+      delSelected: 'Delete selected',
+      player_not_enough: 'Please enroll more players',
+      total_round_title: 'Total rounds',
+      total_round_desc: 'Please set total rounds:',
+      invalid_total_round: 'Invalid rounds setting'
     }
   }
 }

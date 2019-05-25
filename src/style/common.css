@@ -39,9 +39,6 @@ page {
 	flex-grow: 1
 }
 .tab-body {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
 	padding: 20px;
 }
 .title {
@@ -51,4 +48,15 @@ page {
 .description {
 	color: #999999;
 	line-height:1.5;
+}
+.drawer-container{
+	width: 50vw;
+	height: 100vh;
+	background:#fff
+}
+._input {
+	background-color: #fff;
+	height: 40px;
+	border: 1px solid #80848F;
+	border-radius: 5px;
 }

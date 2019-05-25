@@ -21,8 +21,10 @@ const store = new Vuex.Store({
     },
     tiebreaker: {
       roundno: 0,
+      totalrounds: 0,
       playerlist: [],
-      matchlist: []
+      matchlist: [],
+      historylist: []
     }
   },
   mutations: {

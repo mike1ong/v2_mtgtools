@@ -19,7 +19,7 @@
     <slot name="body"></slot>
     <!-- 抽屉部分 -->
     <i-drawer mode="left" :visible="vismenu" @close="vismenu=false">
-      <div class="demo-container">
+      <div class="drawer-container" :style="{'padding-top': (sysinfo.headAreaHeight + 10 + sysinfo.headAreaMarTop + sysinfo.statusBarHeight)  * sysinfo.pixelRatio + 'px'}">
           单击遮罩层关闭
       </div>
     </i-drawer>
@@ -125,10 +125,5 @@ export default {
   width:24px;
   height:24px;
   border-radius: 12px;
-}
-.demo-container{
-	width:50vw;
-	height: 100vh;
-	background:rgb(255, 255, 255);
 }
 </style>
