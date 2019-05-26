@@ -22,6 +22,7 @@ const store = new Vuex.Store({
     tiebreaker: {
       roundno: 0,
       totalrounds: 0,
+      ordertype: 0,
       playerlist: [],
       matchlist: [],
       historylist: []

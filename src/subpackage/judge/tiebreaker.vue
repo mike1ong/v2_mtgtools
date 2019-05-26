@@ -86,17 +86,20 @@
       <div
         v-if="tiebreaker.playerlist.length==0"
         class="flex-fullheight"
-        style="justify-content: center"
-      >
+        style="justify-content: center">
         <wux-prompt
           :visible="tiebreaker.playerlist.length==0"
           :title="t.tiebreaker.no_player_title"
           :text="t.tiebreaker.no_player_text"
         />
       </div>
+
+      <div style="margin-top: 10px;">
+        <wux-segmented-control theme="positive" v-if="tiebreaker.playerlist.length>0" :values="ordertype" :default-current="tiebreaker.ordertype" @change="onChangeOrder" />
+      </div>      
       <i-swipeout v-for="(item, index) in tiebreaker.playerlist" :key="index" :operateWidth="70">
         <div slot="content">
-          <div class="pmps">{{item.pmps}}</div>
+          <div :class="item.isdrop === 1 ? 'pmps grey':'pmps'">{{item.pmps}}</div>
 
           <div class="playerBlock">
             <div class="playerName">
@@ -135,8 +138,42 @@
     </div>
 
     <div class="flex-fullheight tab-body" v-if="currentTab == 'tabResult'">
-      
-      
+      <div v-if="tiebreaker.matchlist.length==0" class="flex-fullheight" style="justify-content: center">
+        <wux-prompt :visible="tiebreaker.matchlist.length==0" :title="t.tiebreaker.no_match_title" :text="t.tiebreaker.no_match_text"/>
+      </div>      
+
+      <div v-if="tiebreaker.matchlist.length>0">
+        <div></div>
+        <div v-for="(item, index) in tiebreaker.matchlist" :key="index" class="cardMain">
+          <wux-card v-if="item.roundno === tiebreaker.roundno" :title="t.tiebreaker.table + ': ' + (index + 1)" :extra="item.games_player1 + ' / ' + item.games_player2 + ' / ' + item.games_drawn">
+            <div slot="body" class="cardBody">
+              <div class="cardBody_item">
+                <div class="winnerLogo" v-if="item.games_player1 > item.games_player2">
+                    <img src="../../../static/img/winner.png" mode="widthFix" class="winnerLogo_img"/>                   
+                </div>
+                <div :class="item.games_player1 > item.games_player2 ? 'player_no player_no_scale' : 'player_no'">
+                    {{t.common.player + ' 1'}}
+                </div>
+                <div class="player_name">
+                  {{item.player1}}
+                </div>
+              </div>
+
+              <div class="cardBody_item">
+                <div class="winnerLogo" v-if="item.games_player1 < item.games_player2">
+                    <img src="../../../static/img/winner.png" mode="widthFix" class="winnerLogo_img"/>                   
+                </div>
+                <div :class="item.games_player1 < item.games_player2 ? 'player_no player_no_scale' : 'player_no'">
+                  {{t.common.player + ' 2'}}
+                </div>
+                <div class="player_name">
+                  {{item.player2}}
+                </div>
+              </div>
+            </div>
+          </wux-card>
+        </div>
+      </div>
     </div>
 
     <div class="flex-fullheight tab-body" v-if="currentTab == 'tabAbout'">
@@ -158,8 +195,8 @@
       <div>{{t.tiebreaker.total_round_desc}}</div>
       <div style="display: flex; width: 100%; justify-content: center;">
         <input
-          class="_input"
-          style="width: 80%"
+          class="_input _input_modal"
+          style="margin-top: 5px;"
           type="number"
           focus
           :placeholder="t.tiebreaker.total_round_desc"
@@ -231,25 +268,6 @@ function calcData (player) {
   }
 }
 
-function calcOpData (player) {
-  let omw = 0
-  let ogw = 0
-  let foes = player.op.length
-  if (foes > 0) {
-    for (let i = 0; i < foes; i++) {
-      let op = findPlayerByName(player.op[i])
-      if (op) {
-        omw += op.pmws
-        ogw += op.pgws
-      }
-    }
-    omw = omw / foes
-    ogw = ogw / foes
-  }
-  player.omw = omw
-  player.ogw = ogw
-}
-
 function shuffleArray (array) {
   for (var i = array.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1))
@@ -288,287 +306,10 @@ function sortByMatchPointsWithTiebreakers (a, b) {
   }
 }
 
-function resultsReady () {
-  var results = 0
-  this.tiebreaker.matchlist.forEach(function (entry) {
-    if (this.tiebreaker.roundno === entry.roundno) {
-      if (
-        entry.games_player1 === 0 &&
-        entry.games_player2 === 0 &&
-        entry.games_drawn === 0
-      ) {
-        results++
-      }
-    }
-  })
-  return results === 0
-}
-
-function findPlayerByName (playerName) {
-  if (playerName) {
-    for (let i = 0; i < this.tiebreaker.playerlist.length; i++) {
-      if (this.tiebreaker.playerlist[i].playerName === playerName) {
-        return players[i]
-      }
-    }
-  }
-  return null
-}
-
-function getPairings () {
-  if (!resultsReady()) return
-  let needPairing = []
-  this.tiebreaker.playerlist.forEach(function (p) {
-    if (p.isdrop === 0) {
-      needPairing.push(p)
-    }
-  })
-  if (needPairing.length === 0) {
-    return
-  }
-  let counter = 0
-  if (this.tiebreaker.roundno === 1) {
-    shuffleArray(needPairing)
-    while (needPairing.length > 0) {
-      let a = needPairing.pop()
-      let b = null
-      if (needPairing.length > 0) {
-        b = needPairing.pop()
-        this.tiebreaker.matchlist.push(
-          createMatch(
-            this.tiebreaker.roundno,
-            counter,
-            a.playerName,
-            b.playerName
-          )
-        )
-        a.op.push(b.playerName)
-        b.op.push(a.playerName)
-      } else {
-        let bye = createMatch(
-          this.tiebreaker.roundno,
-          counter,
-          a.playerName,
-          'BYE'
-        )
-        this.tiebreaker.matchlist.push(bye)
-        addMatchResult(bye, 2, 0, 0)
-      }
-      counter++
-    }
-  } else {
-    needPairing.sort(sortByMatchPointsWithTiebreakers)
-
-    let retry = 0
-    while (needPairing.length > 1) {
-      let a = needPairing[0]
-      let b = null
-      let retryFlag = false
-
-      let offset = 0
-      let played = false
-      do {
-        played = false
-        offset++
-        if (needPairing.length > offset) {
-          b = needPairing[offset]
-          for (var j = 0; j < a.op.length; j++) {
-            if (a.op[j] === b.playerName) {
-              played = true
-              break
-            }
-          }
-        } else {
-          if (needPairing.length === 2 && counter > 0 && retry < 3) {
-            let m = this.tiebreaker.matchlist.pop()
-            let ma = findPlayerByName(m.player1)
-            let mb = findPlayerByName(m.player2)
-            ma.op.pop()
-            mb.op.pop()
-            counter--
-            retry++
-            needPairing.splice(1, 0, ma, mb)
-            retryFlag = true
-            break
-          } else {
-            offset = 1
-            b = needPairing[1]
-          }
-        }
-      } while (played === true)
-
-      if (retryFlag) {
-        continue
-      }
-
-      this.tiebreaker.matchlist.push(
-        createMatch(
-          this.tiebreaker.roundno,
-          counter,
-          a.playerName,
-          b.playerName
-        )
-      )
-      a.op.push(b.playerName)
-      b.op.push(a.playerName)
-      needPairing.splice(offset, 1)
-      needPairing.splice(0, 1)
-      counter++
-    }
-    if (needPairing.length === 1) {
-      let a = needPairing.pop()
-      let bye = createMatch(
-        this.tiebreaker.roundno,
-        counter,
-        a.playerName,
-        'BYE'
-      )
-      this.tiebreaker.matchlist.push(bye)
-      addMatchResult(bye, 2, 0, 0)
-    }
-  }
-}
-
-function delPairings () {
-  while (
-    this.tiebreaker.matchlist.length > 0 &&
-    this.tiebreaker.matchlist[this.tiebreaker.matchlist.length - 1].roundno ===
-      this.tiebreaker.roundno
-  ) {
-    let match = this.tiebreaker.matchlist.pop()
-    let a = findPlayerByName(match.player1)
-    a.op.pop()
-
-    let b = null
-    if (match.player2 !== 'BYE') {
-      b = findPlayerByName(match.player2)
-      b.op.pop()
-    }
-    if (match.games_player1 + match.games_player2 + match.games_drawn > 0) {
-      a.matches--
-      a.games =
-        a.games -
-        (match.games_player1 + match.games_player2 + match.games_drawn)
-      a.games_won = a.games_won - match.games_player1
-      a.games_drawn = a.games_drawn - match.games_drawn
-      if (b) {
-        b.matches--
-        b.games =
-          b.games -
-          (match.games_player1 + match.games_player2 + match.games_drawn)
-        b.games_won = b.games_won - match.games_player2
-        b.games_drawn = b.games_drawn - match.games_drawn
-      }
-      if (match.games_player1 > match.games_player2) {
-        a.matches_won--
-      } else if (match.games_player1 < match.games_player2) {
-        b.matches_won--
-      } else {
-        a.matches_drawn--
-        b.matches_drawn--
-      }
-    }
-    calcData(a)
-    calcData(b)
-  }
-  // 重算omw, ogw
-  for (let i = 0; i < this.tiebreaker.playerlist.length; i++) {
-    calcOpData(this.tiebreaker.playerlist[i])
-  }
-}
-
-function addMatchResult (match, winsA, winsB, draws) {
-  winsA = parseInt(winsA)
-  winsB = parseInt(winsB, 10)
-  draws = parseInt(draws, 10)
-  let games = winsA + winsB + draws
-  if (
-    winsA > 2 ||
-    winsA < 0 ||
-    winsB > 2 ||
-    winsB < 0 ||
-    draws < 0 ||
-    winsA + winsB > 3 ||
-    games < 1
-  ) {
-    return
-  }
-  let A = findPlayerByName(match.player1)
-  let B = null
-  if (match.player2 !== 'BYE') {
-    B = findPlayerByName(match.player2)
-  }
-  if (match.games_player1 + match.games_player2 + match.games_drawn > 0) {
-    A.games =
-      A.games -
-      (match.games_player1 + match.games_player2 + match.games_drawn) +
-      games
-    A.games_won = A.games_won - match.games_player1 + winsA
-    A.games_drawn = A.games_drawn - match.games_drawn + draws
-    if (B) {
-      B.games =
-        B.games -
-        (match.games_player1 + match.games_player2 + match.games_drawn) +
-        games
-      B.games_won = B.games_won - match.games_player2 + winsB
-      B.games_drawn = B.games_drawn - match.games_drawn + draws
-    }
-    if (match.games_player1 > match.games_player2) {
-      A.matches_won--
-    } else if (match.games_player1 < match.games_player2) {
-      B.matches_won--
-    } else {
-      A.matches_drawn--
-      B.matches_drawn--
-    }
-    if (winsA > winsB) {
-      A.matches_won++
-    } else if (winsA < winsB) {
-      B.matches_won++
-    } else {
-      A.matches_drawn++
-      B.matches_drawn++
-    }
-  } else {
-    A.matches++
-    A.games += games
-    A.games_won += winsA
-    A.games_drawn += draws
-    if (B) {
-      B.matches++
-      B.games += games
-      B.games_won += winsB
-      B.games_drawn += draws
-
-      if (winsA > winsB) {
-        A.matches_won++
-      } else if (winsA < winsB) {
-        B.matches_won++
-      } else {
-        A.matches_drawn++
-        B.matches_drawn++
-      }
-    } else {
-      A.matches_won++
-    }
-  }
-
-  calcData(A)
-  calcData(B)
-
-  let set = new Set()
-  for (let i = 0; i < A.op.length; i++) {
-    set.add(A.op[i])
-  }
-  if (B) {
-    for (let i = 0; i < B.op.length; i++) {
-      set.add(B.op[i])
-    }
-  }
-  for (let item of set) {
-    let player = findPlayerByName(item)
-    calcOpData(player)
-  }
+function sortByName (a, b) {
+  let A = a.playerName.toLowerCase()
+  var B = b.playerName.toLowerCase()
+  if (A < B) { return -1 } else if (A > B) { return 1 } else { return 0 }
 }
 
 export default {
@@ -590,6 +331,9 @@ export default {
     ...mapState(['sysinfo', 'tiebreaker']),
     t () {
       return this.$t('pub')
+    },
+    ordertype () {
+      return [this.t.tiebreaker.order_by_rank, this.t.tiebreaker.order_by_name]
     },
     resetAct () {
       return [
@@ -671,7 +415,9 @@ export default {
       'i-cell-group': '../../../static/iview/cell-group/index',
       'i-checkbox': '../../../static/iview/checkbox/index',
       'i-checkbox-group': '../../../static/iview/checkbox-group/index',
-      'wux-prompt': '../../../static/wux/prompt/index'
+      'wux-prompt': '../../../static/wux/prompt/index',
+      'wux-segmented-control': '../../../static/wux/segmented-control/index',
+      'wux-card': '../../../static/wux/card/index'
     }
   },
   onLoad () {
@@ -801,7 +547,7 @@ export default {
           }
           this.tiebreaker.matchlist = []
           this.tiebreaker.roundno = 1
-          getPairings()
+          this.getPairings()
           this.$store.commit('setTiebreaker', this.tiebreaker)
         }
       } finally {
@@ -896,7 +642,6 @@ export default {
       this.visDrawer = false
     },
     onEnrollfinish () {
-      console.log(this.tiebreaker)
       if (this.tiebreaker.roundno === 0) {
         if (this.tiebreaker.playerlist.length < 4) {
           $msg({
@@ -909,6 +654,310 @@ export default {
         this.totalrounds = '' + getNumberOfRounds(this.tiebreaker.playerlist)
         this.beginModal = true
       }
+    },
+    onChangeOrder (e) {
+      let ordertype = 0
+      if (e.mp.detail.key) {
+        ordertype = 1
+      }
+      if (ordertype !== this.tiebreaker.ordertype) {
+        this.tiebreaker.ordertype = ordertype
+        if (this.tiebreaker.ordertype) {
+          this.tiebreaker.playerlist.sort(sortByName)
+        } else {
+          this.tiebreaker.playerlist.sort(sortByMatchPointsWithTiebreakers)
+        }
+        this.$store.commit('setTiebreaker', this.tiebreaker)
+      }
+    },
+    calcOpData (player) {
+      let omw = 0
+      let ogw = 0
+      let foes = player.op.length
+      if (foes > 0) {
+        for (let i = 0; i < foes; i++) {
+          let op = this.findPlayerByName(player.op[i])
+          if (op) {
+            omw += op.pmws
+            ogw += op.pgws
+          }
+        }
+        omw = omw / foes
+        ogw = ogw / foes
+      }
+      player.omw = omw
+      player.ogw = ogw
+    },
+    resultsReady () {
+      var results = 0
+      this.tiebreaker.matchlist.forEach(function (entry) {
+        if (this.tiebreaker.roundno === entry.roundno) {
+          if (
+            entry.games_player1 === 0 &&
+            entry.games_player2 === 0 &&
+            entry.games_drawn === 0
+          ) {
+            results++
+          }
+        }
+      })
+      return results === 0
+    },
+    addMatchResult (match, winsA, winsB, draws) {
+      winsA = parseInt(winsA, 10)
+      winsB = parseInt(winsB, 10)
+      draws = parseInt(draws, 10)
+      let games = winsA + winsB + draws
+      if (winsA > 2 || winsA < 0 || winsB > 2 || winsB < 0 || draws < 0 || winsA + winsB > 3 || games < 1) {
+        return
+      }
+      let A = this.findPlayerByName(match.player1)
+      let B = null
+      if (match.player2 !== 'BYE') {
+        B = this.findPlayerByName(match.player2)
+      }
+      console.log(A, B)
+      console.log(match)
+      if (match.games_player1 + match.games_player2 + match.games_drawn > 0) {
+        A.games = A.games - (match.games_player1 + match.games_player2 + match.games_drawn) + games
+        A.games_won = A.games_won - match.games_player1 + winsA
+        A.games_drawn = A.games_drawn - match.games_drawn + draws
+        if (B) {
+          B.games = B.games - (match.games_player1 + match.games_player2 + match.games_drawn) + games
+          B.games_won = B.games_won - match.games_player2 + winsB
+          B.games_drawn = B.games_drawn - match.games_drawn + draws
+        }
+        if (match.games_player1 > match.games_player2) {
+          A.matches_won--
+        } else if (match.games_player1 < match.games_player2) {
+          B.matches_won--
+        } else {
+          A.matches_drawn--
+          B.matches_drawn--
+        }
+        if (winsA > winsB) {
+          A.matches_won++
+        } else if (winsA < winsB) {
+          B.matches_won++
+        } else {
+          A.matches_drawn++
+          B.matches_drawn++
+        }
+      } else {
+        A.matches++
+        A.games += games
+        A.games_won += winsA
+        A.games_drawn += draws
+        if (B) {
+          B.matches++
+          B.games += games
+          B.games_won += winsB
+          B.games_drawn += draws
+
+          if (winsA > winsB) {
+            A.matches_won++
+          } else if (winsA < winsB) {
+            B.matches_won++
+          } else {
+            A.matches_drawn++
+            B.matches_drawn++
+          }
+        } else {
+          A.matches_won++
+        }
+        console.log(A)
+      }
+      calcData(A)
+      calcData(B)
+
+      let set = new Set()
+      for (let i = 0; i < A.op.length; i++) {
+        set.add(A.op[i])
+      }
+      if (B) {
+        for (let i = 0; i < B.op.length; i++) {
+          set.add(B.op[i])
+        }
+      }
+      for (let item of set) {
+        let player = this.findPlayerByName(item)
+        this.calcOpData(player)
+      }
+      match.games_player1 = winsA
+      match.games_player2 = winsB
+      match.games_drawn = draws
+
+      if (!this.tiebreaker.ordertype) {
+        this.tiebreaker.playerlist.sort(sortByMatchPointsWithTiebreakers)
+      }
+      this.$store.commit('setTiebreaker', this.tiebreaker)
+    },
+    findPlayerByName (playerName) {
+      if (playerName) {
+        for (let i = 0; i < this.tiebreaker.playerlist.length; i++) {
+          if (this.tiebreaker.playerlist[i].playerName === playerName) {
+            return this.tiebreaker.playerlist[i]
+          }
+        }
+      }
+      return null
+    },
+    getPairings () {
+      if (!this.resultsReady()) return
+      let needPairing = []
+      this.tiebreaker.playerlist.forEach(function (p) {
+        if (p.isdrop === 0) {
+          needPairing.push(p)
+        }
+      })
+      if (needPairing.length === 0) {
+        return
+      }
+      let counter = 0
+      if (this.tiebreaker.roundno === 1) {
+        shuffleArray(needPairing)
+        while (needPairing.length > 0) {
+          let a = needPairing.pop()
+          let b = null
+          if (needPairing.length > 0) {
+            b = needPairing.pop()
+            this.tiebreaker.matchlist.push(
+              createMatch(
+                this.tiebreaker.roundno,
+                counter,
+                a.playerName,
+                b.playerName
+              )
+            )
+            a.op.push(b.playerName)
+            b.op.push(a.playerName)
+          } else {
+            let bye = createMatch(
+              this.tiebreaker.roundno,
+              counter,
+              a.playerName,
+              'BYE'
+            )
+            this.tiebreaker.matchlist.push(bye)
+            this.addMatchResult(bye, 2, 0, 0)
+          }
+          counter++
+        }
+      } else {
+        needPairing.sort(sortByMatchPointsWithTiebreakers)
+
+        let retry = 0
+        while (needPairing.length > 1) {
+          let a = needPairing[0]
+          let b = null
+          let retryFlag = false
+
+          let offset = 0
+          let played = false
+          do {
+            played = false
+            offset++
+            if (needPairing.length > offset) {
+              b = needPairing[offset]
+              for (var j = 0; j < a.op.length; j++) {
+                if (a.op[j] === b.playerName) {
+                  played = true
+                  break
+                }
+              }
+            } else {
+              if (needPairing.length === 2 && counter > 0 && retry < 3) {
+                let m = this.tiebreaker.matchlist.pop()
+                let ma = this.findPlayerByName(m.player1)
+                let mb = this.findPlayerByName(m.player2)
+                ma.op.pop()
+                mb.op.pop()
+                counter--
+                retry++
+                needPairing.splice(1, 0, ma, mb)
+                retryFlag = true
+                break
+              } else {
+                offset = 1
+                b = needPairing[1]
+              }
+            }
+          } while (played === true)
+
+          if (retryFlag) {
+            continue
+          }
+
+          this.tiebreaker.matchlist.push(
+            createMatch(
+              this.tiebreaker.roundno,
+              counter,
+              a.playerName,
+              b.playerName
+            )
+          )
+          a.op.push(b.playerName)
+          b.op.push(a.playerName)
+          needPairing.splice(offset, 1)
+          needPairing.splice(0, 1)
+          counter++
+        }
+        if (needPairing.length === 1) {
+          let a = needPairing.pop()
+          let bye = createMatch(
+            this.tiebreaker.roundno,
+            counter,
+            a.playerName,
+            'BYE'
+          )
+          this.tiebreaker.matchlist.push(bye)
+          this.addMatchResult(bye, 2, 0, 0)
+        }
+      }
+      this.$store.commit('setTiebreaker', this.tiebreaker)
+    },
+    delPairings () {
+      while (
+        this.tiebreaker.matchlist.length > 0 &&
+        this.tiebreaker.matchlist[this.tiebreaker.matchlist.length - 1].roundno === this.tiebreaker.roundno
+      ) {
+        let match = this.tiebreaker.matchlist.pop()
+        let a = this.findPlayerByName(match.player1)
+        a.op.pop()
+
+        let b = null
+        if (match.player2 !== 'BYE') {
+          b = this.findPlayerByName(match.player2)
+          b.op.pop()
+        }
+        if (match.games_player1 + match.games_player2 + match.games_drawn > 0) {
+          a.matches--
+          a.games = a.games - (match.games_player1 + match.games_player2 + match.games_drawn)
+          a.games_won = a.games_won - match.games_player1
+          a.games_drawn = a.games_drawn - match.games_drawn
+          if (b) {
+            b.matches--
+            b.games = b.games - (match.games_player1 + match.games_player2 + match.games_drawn)
+            b.games_won = b.games_won - match.games_player2
+            b.games_drawn = b.games_drawn - match.games_drawn
+          }
+          if (match.games_player1 > match.games_player2) {
+            a.matches_won--
+          } else if (match.games_player1 < match.games_player2) {
+            b.matches_won--
+          } else {
+            a.matches_drawn--
+            b.matches_drawn--
+          }
+        }
+        calcData(a)
+        calcData(b)
+      }
+      // 重算omw, ogw
+      for (let i = 0; i < this.tiebreaker.playerlist.length; i++) {
+        this.calcOpData(this.tiebreaker.playerlist[i])
+      }
+      this.$store.commit('setTiebreaker', this.tiebreaker)
     }
   },
   mounted () {}
@@ -975,5 +1024,39 @@ export default {
   background: #2d8cf0;
   color: #fff;
   align-items: center;
+}
+.cardMain {
+  margin-bottom: 20px;
+}
+.cardBody {
+  display: flex;
+}
+.cardBody_item {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.player_no {
+  font-size: 14px;
+  color: #888888;
+}
+.player_no_scale {
+  margin-top: -50rpx;
+}
+.player_name {
+  font-weight: bold;
+  text-align: center;
+  font-size: 20px;
+}
+.winnerLogo {
+  float: left;
+  margin-left: 150rpx;
+}
+.winnerLogo_img {
+  width: 50rpx;
+  height: 40rpx;
+}
+.grey {
+  background: #80848f;
 }
 </style>

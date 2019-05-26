@@ -79,6 +79,8 @@ export default {
       resetDesc: '清空所有数据？',
       no_player_title: '当前没有参赛的牌手',
       no_player_text: '请返回主页添加牌手',
+      no_match_title: '当前没有配对信息',
+      no_match_text: '请先结束报名创建比赛',
       deleteConfirm: '删除确认',
       dropConfirm: '退赛确认',
       confirmText: '此操作无法回退',
@@ -87,7 +89,10 @@ export default {
       player_not_enough: '请至少添加4名牌手',
       total_round_title: '录入局数',
       total_round_desc: '请输入要进行的局数:',
-      invalid_total_round: '无效的局数设置'
+      invalid_total_round: '无效的局数设置',
+      order_by_rank: '排名',
+      order_by_name: '姓名',
+      table: '桌次'
     }
   }
 }

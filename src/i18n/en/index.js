@@ -79,6 +79,8 @@ export default {
       resetDesc: 'Ready to reset pairings?',
       no_player_title: 'No player enrolled',
       no_player_text: 'Please enroll player first.',
+      no_match_title: 'No pairing data',
+      no_match_text: 'Please finish enrolling first.',
       deleteConfirm: 'Delete Confirmation',
       dropConfirm: 'Drop Confirmation',
       confirmText: 'this operation can\'t be reversed',
@@ -87,7 +89,10 @@ export default {
       player_not_enough: 'Please enroll more players',
       total_round_title: 'Total rounds',
       total_round_desc: 'Please set total rounds:',
-      invalid_total_round: 'Invalid rounds setting'
+      invalid_total_round: 'Invalid rounds setting',
+      order_by_rank: 'By Rank',
+      order_by_name: 'By Name',
+      table: 'Table'
     }
   }
 }
