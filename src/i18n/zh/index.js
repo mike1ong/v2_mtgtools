@@ -78,6 +78,7 @@ export default {
       resetConfirm: '确认重置',
       resetDesc: '清空所有数据？',
       deletePairingDesc: '删除当前配对信息？',
+      enroll_type: '以何种方式加入比赛？',
       no_player_title: '当前没有参赛的牌手',
       no_player_text: '请返回主页添加牌手',
       no_match_title: '当前没有配对信息',
@@ -100,7 +101,9 @@ export default {
       rounds: '第{0}轮',
       pairing_created: '配对已经创建',
       adjust_pairing: '调整配对',
-      delete_pairing: '删除当前配对'
+      delete_pairing: '删除当前配对',
+      add_with_bye: '轮空',
+      add_with_lose: '一轮负'
     }
   }
 }

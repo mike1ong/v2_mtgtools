@@ -3,7 +3,7 @@
     <mtHeader color="#353535" :showIcon="true"></mtHeader>
     <i-tabs :current="currentTab" @change="changeTab">
       <i-tab key="tabHome" :title="t.common.home"></i-tab>
-      <i-tab key="tabPlayer" :title="t.tiebreaker.standing"></i-tab>
+      <i-tab key="tabPlayer" :title="t.tiebreaker.standing" :count="tiebreaker.playerlist.length"></i-tab>
       <i-tab key="tabResult" :title="t.tiebreaker.pairing"></i-tab>
       <i-tab key="tabAbout" :title="t.common.about"></i-tab>
     </i-tabs>
@@ -108,7 +108,7 @@
               <div class="flex-space"></div>
               <div
                 style="color: #80848f"
-              >{{item.games_won + ' / ' + (item.games - item.games_won - item.games_drawn) + ' / ' + item.games_drawn}}</div>
+              >{{item.matches_won + ' / ' + (item.matches - item.matches_won - item.matches_drawn) + ' / ' + item.matches_drawn}}</div>
             </div>
             <div
               class="playerDetail"
@@ -130,9 +130,7 @@
         mask-closable
       >
         <div slot="header" style="padding: 16px">
-          <div
-            style="color: #444;font-size: 16px"
-          >{{tiebreaker.roundno == 0 ? t.tiebreaker.deleteConfirm : t.tiebreaker.dropConfirm}}</div>
+          <div style="color: #444;font-size: 16px">{{tiebreaker.roundno == 0 ? t.tiebreaker.deleteConfirm : t.tiebreaker.dropConfirm}}</div>
           <div>{{t.tiebreaker.confirmText}}</div>
         </div>
       </i-action-sheet>
@@ -192,9 +190,10 @@
       >Based on TiebreakerJS by Johannes Kühnel (https://www.kraken.at/), partial modified, licensed under CC BY-NC-SA 4.0. https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh</div>
     </div>
 
-    <i-modal :visible="visModal" :actions="actModal" @clickItem="handleModal">
-      <div>{{modalType == 0 ? t.tiebreaker.resetDesc : t.tiebreaker.deletePairingDesc}}</div>
+    <i-modal :visible="visModal" :actions="actModal" @clickItem="handleModal" :action-mode="modalType == 2 ? 'vertical' : 'horizontal'">
+      <div>{{modalType == 0 ? t.tiebreaker.resetDesc : modalType == 2 ? t.tiebreaker.enroll_type : t.tiebreaker.deletePairingDesc}}</div>
     </i-modal>
+
     <i-modal
       :title="t.tiebreaker.total_round_title"
       :visible="beginModal"
@@ -350,9 +349,17 @@ export default {
       return [this.t.tiebreaker.order_by_rank, this.t.tiebreaker.order_by_name]
     },
     actModal () {
-      return [
-        {name: this.t.common.cancel}, {name: this.t.common.confirm, color: '#ed3f14'}
-      ]
+      if (this.modalType === 2) {
+        return [
+          {name: this.t.tiebreaker.add_with_bye, color: '#2d8cf0'},
+          {name: this.t.tiebreaker.add_with_lose, color: '#2d8cf0'},
+          {name: this.t.common.cancel}
+        ]
+      } else {
+        return [
+          {name: this.t.common.cancel}, {name: this.t.common.confirm, color: '#ed3f14'}
+        ]
+      }
     },
     beginAct () {
       return [
@@ -506,6 +513,11 @@ export default {
             return
           }
           // add player
+          if (this.tiebreaker.roundno > 0) {
+            this.modalType = 2
+            this.visModal = true
+            return
+          }
           this.tiebreaker.playerlist.push(createPlayer(this.playerName))
           flag = false
           for (let i = 0; i < this.tiebreaker.historylist.length; i++) {
@@ -526,7 +538,9 @@ export default {
             type: 'info'
           })
         } finally {
-          this.playerName = ''
+          if (this.tiebreaker.roundno === 0) {
+            this.playerName = ''
+          }
         }
       }
     },
@@ -572,9 +586,9 @@ export default {
       }
     },
     handleModal (e) {
-      if (e && e.target.index) {
-        if (this.modalType === 0) {
-          // reset game
+      if (e) {
+        let idx = e.target.index
+        if (this.modalType === 0 && idx === 1) {
           this.tiebreaker.playerlist = []
           this.tiebreaker.matchlist = []
           this.tiebreaker.roundno = 0
@@ -583,9 +597,68 @@ export default {
             content: this.t.common.success,
             type: 'info'
           })
-        } else {
+        } else if (this.modalType === 1 && idx === 1) {
           // delete pairing
           this.delPairings()
+        } else if (this.modalType === 2) {
+          if (!this.playerName) return
+          try {
+            if (idx === 0) {
+              // grant bye
+              this.tiebreaker.playerlist.push(createPlayer(this.playerName))
+              let flag = false
+              for (let i = 0; i < this.tiebreaker.historylist.length; i++) {
+                if (this.tiebreaker.historylist[i].toLowerCase() === this.playerName.toLowerCase()) {
+                  flag = true
+                  break
+                }
+              }
+              if (!flag) {
+                this.tiebreaker.historylist.push(this.playerName)
+              }
+
+              let roundno = this.tiebreaker.roundno
+              for (let i = this.tiebreaker.matchlist.length - 1; i >= 0; i--) {
+                let match = this.tiebreaker.matchlist[i]
+                if (roundno === match.roundno) {
+                  let bye = createMatch(
+                    roundno,
+                    match.counter + 1,
+                    this.playerName,
+                    'BYE'
+                  )
+                  this.tiebreaker.matchlist.splice(i + 1, 0, bye)
+                  this.addMatchResult(bye, 2, 0, 0)
+                  roundno--
+                }
+              }
+              this.$store.commit('setTiebreaker', this.tiebreaker)
+              $msg({
+                content: this.t.common.success,
+                type: 'info'
+              })
+            } else if (idx === 1) {
+              // grant loss
+              this.tiebreaker.playerlist.push(createPlayer(this.playerName))
+              let flag = false
+              for (let i = 0; i < this.tiebreaker.historylist.length; i++) {
+                if (this.tiebreaker.historylist[i].toLowerCase() === this.playerName.toLowerCase()) {
+                  flag = true
+                  break
+                }
+              }
+              if (!flag) {
+                this.tiebreaker.historylist.push(this.playerName)
+              }
+              this.$store.commit('setTiebreaker', this.tiebreaker)
+              $msg({
+                content: this.t.common.success,
+                type: 'info'
+              })
+            }
+          } finally {
+            this.playerName = ''
+          }
         }
       }
       this.visModal = false
@@ -1051,6 +1124,9 @@ export default {
         this.calcOpData(this.tiebreaker.playerlist[i])
       }
       this.tiebreaker.roundno--
+      if (!this.tiebreaker.ordertype) {
+        this.tiebreaker.playerlist.sort(sortByMatchPointsWithTiebreakers)
+      }
       this.$store.commit('setTiebreaker', this.tiebreaker)
     }
   },

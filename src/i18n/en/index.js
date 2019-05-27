@@ -78,6 +78,7 @@ export default {
       resetConfirm: 'Reset confirmation',
       resetDesc: 'Ready to reset pairings?',
       deletePairingDesc: 'Delete all pairings?',
+      enroll_type: 'Select enrolling type',
       no_player_title: 'No player enrolled',
       no_player_text: 'Please enroll player first.',
       no_match_title: 'No pairing data',
@@ -100,7 +101,9 @@ export default {
       rounds: 'Round {0}',
       pairing_created: 'Pairings created',
       adjust_pairing: 'Adjust pairing',
-      delete_pairing: 'Delete pairing'
+      delete_pairing: 'Delete pairing',
+      add_with_bye: 'Grant Bye',
+      add_with_lose: 'Grant Loss'
     }
   }
 }
