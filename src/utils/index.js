@@ -48,11 +48,30 @@ function formatTime (date) {
   return `${t1} ${t2}`
 }
 
+function format (str, args) {
+  let result = str
+  if (arguments.length <= 1) {
+    return result
+  }
+  let data = arguments // 如果模板参数是数组
+  for (let key in data) {
+    if (key > 0) {
+      let value = data[key]
+      key -= 1
+      if (undefined !== value) {
+        result = result.replace('{' + key + '}', value)
+      }
+    }
+  }
+  return result
+}
+
 export {
   formatNumber,
   formatTime,
   getCurrentPageUrl,
   intToTime,
   $Message as $msg,
-  $Toast as $toast
+  $Toast as $toast,
+  format
 }

@@ -68,7 +68,7 @@
 import mta from '../../utils/mta_analysis'
 import { mapState } from 'vuex'
 import mtHeader from '@/components/mtHeader'
-import { intToTime, $msg } from '../../utils/index'
+import { intToTime, $msg, format } from '../../utils/index'
 let t
 let seconds
 
@@ -101,13 +101,13 @@ export default {
         text: this.t.drafttimer.text_welcome_page2,
         btn: this.t.drafttimer.they_got_it
       }, {
-        text: this.format(this.t.drafttimer.open_first_booster, this.drafttimer.cardsPerPack),
+        text: format(this.t.drafttimer.open_first_booster, this.drafttimer.cardsPerPack),
         btn: this.t.drafttimer.begin_the_draft
       }, {
-        text: this.format(this.t.drafttimer.open_second_booster, this.drafttimer.cardsPerPack),
+        text: format(this.t.drafttimer.open_second_booster, this.drafttimer.cardsPerPack),
         btn: this.t.drafttimer.begin_the_draft
       }, {
-        text: this.format(this.t.drafttimer.open_third_booster, this.drafttimer.cardsPerPack),
+        text: format(this.t.drafttimer.open_third_booster, this.drafttimer.cardsPerPack),
         btn: this.t.drafttimer.begin_the_draft
       }, {
         text: this.t.drafttimer.draft_is_over,
@@ -127,13 +127,13 @@ export default {
         if (this.breakTime === 3) {
           return this.countdown > 0 ? this.t.drafttimer.construct : this.t.drafttimer.draft_is_over
         } else {
-          return this.countdown > 0 ? this.format(this.t.drafttimer.review, (this.breakTime + 1) * 30) : this.t.drafttimer.put_back_cards
+          return this.countdown > 0 ? format(this.t.drafttimer.review, (this.breakTime + 1) * 30) : this.t.drafttimer.put_back_cards
         }
       } else {
         if (this.countdown > 0) {
-          return this.pick === 1 ? this.t.drafttimer.look : this.format(this.t.drafttimer.look_n_pass, this.drafttimer.cardsPerPack - this.pick + 1)
+          return this.pick === 1 ? this.t.drafttimer.look : format(this.t.drafttimer.look_n_pass, this.drafttimer.cardsPerPack - this.pick + 1)
         } else {
-          return this.format(this.t.drafttimer.look_n_pass, this.drafttimer.cardsPerPack - this.pick)
+          return format(this.t.drafttimer.look_n_pass, this.drafttimer.cardsPerPack - this.pick)
         }
       }
     },
@@ -141,7 +141,7 @@ export default {
       if (this.breakTime > 0) {
         return ''
       } else {
-        return this.format(this.t.drafttimer.booster_n_pick, this.pack, this.pick)
+        return format(this.t.drafttimer.booster_n_pick, this.pack, this.pick)
       }
     },
     counting_success () {
@@ -162,7 +162,7 @@ export default {
       return intToTime(this.countdown)
     },
     actStep () {
-      return [{name: this.t.common.home}, {name: this.format(this.t.drafttimer.packs, 1)}, {name: this.format(this.t.drafttimer.packs, 2)}, {name: this.format(this.t.drafttimer.packs, 3)}]
+      return [{name: this.t.common.home}, {name: format(this.t.drafttimer.packs, 1)}, {name: format(this.t.drafttimer.packs, 2)}, {name: format(this.t.drafttimer.packs, 3)}]
     }
   },
   config: {
@@ -252,7 +252,7 @@ export default {
             wx.vibrateLong()
           }
           $msg({
-            content: this.format(this.t.drafttimer.timeleft, this.drafttimer.warnSeconds),
+            content: format(this.t.drafttimer.timeleft, this.drafttimer.warnSeconds),
             type: 'warning'
           })
         }

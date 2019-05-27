@@ -77,6 +77,7 @@ export default {
       duplicatedname: '此牌手已存在',
       resetConfirm: '确认重置',
       resetDesc: '清空所有数据？',
+      deletePairingDesc: '删除当前配对信息？',
       no_player_title: '当前没有参赛的牌手',
       no_player_text: '请返回主页添加牌手',
       no_match_title: '当前没有配对信息',
@@ -92,7 +93,14 @@ export default {
       invalid_total_round: '无效的局数设置',
       order_by_rank: '排名',
       order_by_name: '姓名',
-      table: '桌次'
+      table: '桌次',
+      nextround: '创建下一轮',
+      endgame: '结束比赛',
+      needscore: '仍有对局尚未完成',
+      rounds: '第{0}轮',
+      pairing_created: '配对已经创建',
+      adjust_pairing: '调整配对',
+      delete_pairing: '删除当前配对'
     }
   }
 }

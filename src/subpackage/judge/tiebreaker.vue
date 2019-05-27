@@ -33,9 +33,10 @@
         shape="circle"
         size="small"
         @click="onFillRandom"
+        :disabled="tiebreaker.roundno>0"
       >{{t.tiebreaker.fillplayer}}</i-button>
       <div class="flex-space"></div>
-      <i-button type="primary" size="small" @click="onEnrollfinish">{{t.tiebreaker.endenroll}}</i-button>
+      <i-button type="primary" size="small" @click="onMainButton">{{tiebreaker.roundno==0 ? t.tiebreaker.endenroll : tiebreaker.totalrounds == tiebreaker.roundno ? t.tiebreaker.endgame : t.tiebreaker.nextround}}</i-button>
       <i-button type="error" size="small" @click="onReset">{{t.tiebreaker.reset}}</i-button>
       <i-drawer mode="right" :visible="visDrawer" :mask-closable="false">
         <div
@@ -67,7 +68,7 @@
                 size="small"
                 @click="visDrawer=false; hisplayer=[]"
               >{{t.common.cancel}}</i-button>
-              <div style="margin-top: 20px; margin-bottom: 20px;">
+              <div class="div_space">
                 <i-button
                   type="error"
                   shape="circle"
@@ -142,36 +143,44 @@
         <wux-prompt :visible="tiebreaker.matchlist.length==0" :title="t.tiebreaker.no_match_title" :text="t.tiebreaker.no_match_text"/>
       </div>      
 
-      <div v-if="tiebreaker.matchlist.length>0">
-        <div></div>
-        <div v-for="(item, index) in tiebreaker.matchlist" :key="index" class="cardMain">
-          <wux-card v-if="item.roundno === tiebreaker.roundno" :title="t.tiebreaker.table + ': ' + (index + 1)" :extra="item.games_player1 + ' / ' + item.games_player2 + ' / ' + item.games_drawn">
-            <div slot="body" class="cardBody">
-              <div class="cardBody_item">
-                <div class="winnerLogo" v-if="item.games_player1 > item.games_player2">
-                    <img src="../../../static/img/winner.png" mode="widthFix" class="winnerLogo_img"/>                   
+      <div class="flex-fullheight" v-if="tiebreaker.matchlist.length>0">
+        <div class="roundTitle">{{currRound}}</div>
+        <div>
+          <div v-for="(item, index) in tiebreaker.matchlist" :key="index" class="cardMain">
+            <wux-card v-if="item.roundno === tiebreaker.roundno" :title="t.tiebreaker.table + ': ' + (item.counter + 1)" :extra="item.games_player1 + ' / ' + item.games_player2 + ' / ' + item.games_drawn">
+              <div slot="body" class="cardBody">
+                <div class="cardBody_item">
+                  <div class="winnerLogo" v-if="item.games_player1 > item.games_player2">
+                      <img src="../../../static/img/winner.png" mode="widthFix" class="winnerLogo_img"/>                   
+                  </div>
+                  <div :class="item.games_player1 > item.games_player2 ? 'player_no player_no_scale' : 'player_no'">
+                      {{t.common.player + ' 1'}}
+                  </div>
+                  <div class="player_name">
+                    {{item.player1}}
+                  </div>
                 </div>
-                <div :class="item.games_player1 > item.games_player2 ? 'player_no player_no_scale' : 'player_no'">
-                    {{t.common.player + ' 1'}}
-                </div>
-                <div class="player_name">
-                  {{item.player1}}
-                </div>
-              </div>
 
-              <div class="cardBody_item">
-                <div class="winnerLogo" v-if="item.games_player1 < item.games_player2">
-                    <img src="../../../static/img/winner.png" mode="widthFix" class="winnerLogo_img"/>                   
-                </div>
-                <div :class="item.games_player1 < item.games_player2 ? 'player_no player_no_scale' : 'player_no'">
-                  {{t.common.player + ' 2'}}
-                </div>
-                <div class="player_name">
-                  {{item.player2}}
+                <div class="cardBody_item">
+                  <div class="winnerLogo" v-if="item.games_player1 < item.games_player2">
+                      <img src="../../../static/img/winner.png" mode="widthFix" class="winnerLogo_img"/>                   
+                  </div>
+                  <div :class="item.games_player1 < item.games_player2 ? 'player_no player_no_scale' : 'player_no'">
+                    {{t.common.player + ' 2'}}
+                  </div>
+                  <div class="player_name">
+                    {{item.player2}}
+                  </div>
                 </div>
               </div>
-            </div>
-          </wux-card>
+            </wux-card>
+          </div>
+        </div>
+        <div class="flex-space"></div>
+        <i-button type="primary" size="small" @click="onMainButton">{{tiebreaker.roundno == tiebreaker.totalrounds ? t.tiebreaker.endgame : t.tiebreaker.nextround}}</i-button>
+        <i-button type="ghost" size="small" @click="onAdjustPairing">{{t.tiebreaker.adjust_pairing}}</i-button>
+        <div class="div_space">
+          <i-button type="error" size="small" @click="onDeletePairing">{{t.tiebreaker.delete_pairing}}</i-button>
         </div>
       </div>
     </div>
@@ -183,8 +192,8 @@
       >Based on TiebreakerJS by Johannes Kühnel (https://www.kraken.at/), partial modified, licensed under CC BY-NC-SA 4.0. https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh</div>
     </div>
 
-    <i-modal :visible="resetModal" :actions="resetAct" @clickItem="handleReset">
-      <div>{{t.tiebreaker.resetDesc}}</div>
+    <i-modal :visible="visModal" :actions="actModal" @clickItem="handleModal">
+      <div>{{modalType == 0 ? t.tiebreaker.resetDesc : t.tiebreaker.deletePairingDesc}}</div>
     </i-modal>
     <i-modal
       :title="t.tiebreaker.total_round_title"
@@ -212,7 +221,7 @@
 import mta from '../../utils/mta_analysis'
 import { mapState } from 'vuex'
 import mtHeader from '@/components/mtHeader'
-import { $msg } from '../../utils/index'
+import { $msg, format } from '../../utils/index'
 // import { createPlayer } from './js/tiebreaker.js'
 let playerid = 100
 
@@ -230,10 +239,10 @@ function createPlayer (playerName) {
     games_won: 0,
     games_drawn: 0,
     pmps: 0,
-    pmws: 0.0,
-    pgws: 0.0,
-    omw: 0.0,
-    ogw: 0.0,
+    pmws: '0.000',
+    pgws: '0.000',
+    omw: '0.000',
+    ogw: '0.000',
     isdrop: 0
   }
 }
@@ -256,15 +265,16 @@ function createMatch (roundno, counter, A, B) {
 function calcData (player) {
   if (player) {
     player.pmps = player.matches_won * 3 + player.matches_drawn
-    player.pmws = parseFloat(
-      Math.max(0.33, player.pmps / (3 * player.matches))
-    )
-    player.pgws = parseFloat(
-      Math.max(
-        0.33,
-        (3 * player.games_won + player.games_drawn) / (3 * player.games)
-      )
-    )
+    if (player.matches === 0) {
+      player.pmws = '0.000'
+    } else {
+      player.pmws = parseFloat(Math.max(0.33, player.pmps / (3 * player.matches))).toFixed(3)
+    }
+    if (player.games === 0) {
+      player.pgws = '0.000'
+    } else {
+      player.pgws = parseFloat(Math.max(0.33, (3 * player.games_won + player.games_drawn) / (3 * player.games))).toFixed(3)
+    }
   }
 }
 
@@ -318,11 +328,12 @@ export default {
     return {
       currentTab: 'tabHome',
       playerName: '',
-      resetModal: false,
+      visModal: false,
       beginModal: false,
       visDeletePlayer: false,
       visDrawer: false,
       selectedId: 0,
+      modalType: 0,
       hisplayer: [],
       totalrounds: ''
     }
@@ -332,18 +343,15 @@ export default {
     t () {
       return this.$t('pub')
     },
+    currRound () {
+      return format(this.t.tiebreaker.rounds, this.tiebreaker.roundno)
+    },
     ordertype () {
       return [this.t.tiebreaker.order_by_rank, this.t.tiebreaker.order_by_name]
     },
-    resetAct () {
+    actModal () {
       return [
-        {
-          name: this.t.common.cancel
-        },
-        {
-          name: this.t.common.confirm,
-          color: '#ed3f14'
-        }
+        {name: this.t.common.cancel}, {name: this.t.common.confirm, color: '#ed3f14'}
       ]
     },
     beginAct () {
@@ -441,6 +449,9 @@ export default {
       }
     },
     onFillRandom (e) {
+      if (this.tiebreaker.roundno > 0) {
+        return
+      }
       let name = this.t.common.player
       for (let sno = 1; sno <= 8; sno++) {
         let flag = false
@@ -469,7 +480,7 @@ export default {
         this.playerName = this.playerName.trim()
         try {
           // reserved name
-          if (this.playerName.toLowerCase() === 'bye') {
+          if (this.playerName.toLowerCase() === 'bye' || this.playerName.toLowerCase() === 'lose') {
             $msg({
               content: this.t.tiebreaker.reservedname,
               type: 'error'
@@ -526,7 +537,8 @@ export default {
       this.totalrounds = e.mp.detail.value
     },
     onReset (e) {
-      this.resetModal = true
+      this.modalType = 0
+      this.visModal = true
     },
     handleBegin (e) {
       try {
@@ -549,23 +561,38 @@ export default {
           this.tiebreaker.roundno = 1
           this.getPairings()
           this.$store.commit('setTiebreaker', this.tiebreaker)
+          $msg({
+            content: this.t.tiebreaker.pairing_created,
+            type: 'info'
+          })
+          this.currentTab = 'tabResult'
         }
       } finally {
         this.beginModal = false
       }
     },
-    handleReset (e) {
+    handleModal (e) {
       if (e && e.target.index) {
-        this.tiebreaker.playerlist = []
-        this.tiebreaker.matchlist = []
-        this.tiebreaker.roundno = 0
-        this.$store.commit('setTiebreaker', this.tiebreaker)
-        $msg({
-          content: this.t.common.success,
-          type: 'info'
-        })
+        if (this.modalType === 0) {
+          // reset game
+          this.tiebreaker.playerlist = []
+          this.tiebreaker.matchlist = []
+          this.tiebreaker.roundno = 0
+          this.$store.commit('setTiebreaker', this.tiebreaker)
+          $msg({
+            content: this.t.common.success,
+            type: 'info'
+          })
+        } else {
+          // delete pairing
+          this.delPairings()
+        }
       }
-      this.resetModal = false
+      this.visModal = false
+    },
+    onDeletePairing (e) {
+      this.modalType = 1
+      this.visModal = true
     },
     onDeletePlayer (e) {
       if (e.mp.currentTarget.dataset.id) {
@@ -665,8 +692,16 @@ export default {
       this.hisplayer = []
       this.visDrawer = false
     },
-    onEnrollfinish () {
+    onMainButton () {
       if (this.tiebreaker.roundno === 0) {
+        // remove droped
+        for (let i = this.tiebreaker.playerlist.length - 1; i >= 0; i--) {
+          let player = this.tiebreaker.playerlist[i]
+          if (player.isdrop === 1) {
+            this.tiebreaker.playerlist.splice(i, 1)
+          }
+        }
+        //
         if (this.tiebreaker.playerlist.length < 4) {
           $msg({
             content: this.t.tiebreaker.player_not_enough,
@@ -677,6 +712,29 @@ export default {
         // 创建比赛
         this.totalrounds = '' + getNumberOfRounds(this.tiebreaker.playerlist)
         this.beginModal = true
+      } else {
+        let flag = this.resultsReady()
+        if (!flag) {
+          $msg({
+            content: this.t.tiebreaker.needscore,
+            type: 'error'
+          })
+          return
+        }
+        if (this.tiebreaker.roundno === this.tiebreaker.totalrounds) {
+          // switchTab
+          this.currentTab = 'tabPlayer'
+        } else {
+          // getPairing
+          this.tiebreaker.roundno += 1
+          this.getPairings()
+          this.$store.commit('setTiebreaker', this.tiebreaker)
+          $msg({
+            content: this.t.tiebreaker.pairing_created,
+            type: 'info'
+          })
+          this.currentTab = 'tabResult'
+        }
       }
     },
     onChangeOrder (e) {
@@ -695,27 +753,28 @@ export default {
       }
     },
     calcOpData (player) {
-      let omw = 0
-      let ogw = 0
+      let omw = 0.0
+      let ogw = 0.0
       let foes = player.op.length
       if (foes > 0) {
         for (let i = 0; i < foes; i++) {
           let op = this.findPlayerByName(player.op[i])
           if (op) {
-            omw += op.pmws
-            ogw += op.pgws
+            omw += parseFloat(op.pmws)
+            ogw += parseFloat(op.pgws)
           }
         }
         omw = omw / foes
         ogw = ogw / foes
       }
-      player.omw = omw
-      player.ogw = ogw
+      player.omw = omw.toFixed(3)
+      player.ogw = ogw.toFixed(3)
     },
     resultsReady () {
       var results = 0
+      let roundno = this.tiebreaker.roundno
       this.tiebreaker.matchlist.forEach(function (entry) {
-        if (this.tiebreaker.roundno === entry.roundno) {
+        if (roundno === entry.roundno) {
           if (
             entry.games_player1 === 0 &&
             entry.games_player2 === 0 &&
@@ -737,11 +796,9 @@ export default {
       }
       let A = this.findPlayerByName(match.player1)
       let B = null
-      if (match.player2 !== 'BYE') {
+      if (match.player2 !== 'BYE' && match.player2 !== 'LOSE') {
         B = this.findPlayerByName(match.player2)
       }
-      console.log(A, B)
-      console.log(match)
       if (match.games_player1 + match.games_player2 + match.games_drawn > 0) {
         A.games = A.games - (match.games_player1 + match.games_player2 + match.games_drawn) + games
         A.games_won = A.games_won - match.games_player1 + winsA
@@ -754,18 +811,26 @@ export default {
         if (match.games_player1 > match.games_player2) {
           A.matches_won--
         } else if (match.games_player1 < match.games_player2) {
-          B.matches_won--
+          if (B) {
+            B.matches_won--
+          }
         } else {
           A.matches_drawn--
-          B.matches_drawn--
+          if (B) {
+            B.matches_drawn--
+          }
         }
         if (winsA > winsB) {
           A.matches_won++
         } else if (winsA < winsB) {
-          B.matches_won++
+          if (B) {
+            B.matches_won++
+          }
         } else {
           A.matches_drawn++
-          B.matches_drawn++
+          if (B) {
+            B.matches_drawn++
+          }
         }
       } else {
         A.matches++
@@ -789,7 +854,6 @@ export default {
         } else {
           A.matches_won++
         }
-        console.log(A)
       }
       calcData(A)
       calcData(B)
@@ -941,6 +1005,7 @@ export default {
       this.$store.commit('setTiebreaker', this.tiebreaker)
     },
     delPairings () {
+      if (this.tiebreaker.roundno === 0) return
       while (
         this.tiebreaker.matchlist.length > 0 &&
         this.tiebreaker.matchlist[this.tiebreaker.matchlist.length - 1].roundno === this.tiebreaker.roundno
@@ -950,7 +1015,7 @@ export default {
         a.op.pop()
 
         let b = null
-        if (match.player2 !== 'BYE') {
+        if (match.player2 !== 'BYE' && match.player2 !== 'LOSE') {
           b = this.findPlayerByName(match.player2)
           b.op.pop()
         }
@@ -968,10 +1033,14 @@ export default {
           if (match.games_player1 > match.games_player2) {
             a.matches_won--
           } else if (match.games_player1 < match.games_player2) {
-            b.matches_won--
+            if (b) {
+              b.matches_won--
+            }
           } else {
             a.matches_drawn--
-            b.matches_drawn--
+            if (b) {
+              b.matches_drawn--
+            }
           }
         }
         calcData(a)
@@ -981,6 +1050,7 @@ export default {
       for (let i = 0; i < this.tiebreaker.playerlist.length; i++) {
         this.calcOpData(this.tiebreaker.playerlist[i])
       }
+      this.tiebreaker.roundno--
       this.$store.commit('setTiebreaker', this.tiebreaker)
     }
   },
@@ -1079,6 +1149,11 @@ export default {
 .winnerLogo_img {
   width: 50rpx;
   height: 40rpx;
+}
+.roundTitle {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 5px;
 }
 .grey {
   background: #80848f;

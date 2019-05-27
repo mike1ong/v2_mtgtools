@@ -19,7 +19,7 @@
       <button data-num="3" @click="addNum" class="btnNum">+3</button>
       <button data-num="4" @click="addNum" class="btnNum">+4</button>
     </div>
-  </div>  
+  </div>
 </template>
 
 <script>

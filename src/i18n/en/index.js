@@ -77,6 +77,7 @@ export default {
       duplicatedname: 'Player exists',
       resetConfirm: 'Reset confirmation',
       resetDesc: 'Ready to reset pairings?',
+      deletePairingDesc: 'Delete all pairings?',
       no_player_title: 'No player enrolled',
       no_player_text: 'Please enroll player first.',
       no_match_title: 'No pairing data',
@@ -92,7 +93,14 @@ export default {
       invalid_total_round: 'Invalid rounds setting',
       order_by_rank: 'By Rank',
       order_by_name: 'By Name',
-      table: 'Table'
+      table: 'Table',
+      nextround: 'Create next round',
+      endgame: 'Finish',
+      needscore: 'Please submit all scores first',
+      rounds: 'Round {0}',
+      pairing_created: 'Pairings created',
+      adjust_pairing: 'Adjust pairing',
+      delete_pairing: 'Delete pairing'
     }
   }
 }
