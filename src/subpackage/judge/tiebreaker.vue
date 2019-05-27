@@ -97,7 +97,7 @@
       <div style="margin-top: 10px;">
         <wux-segmented-control theme="positive" v-if="tiebreaker.playerlist.length>0" :values="ordertype" :default-current="tiebreaker.ordertype" @change="onChangeOrder" />
       </div>      
-      <i-swipeout v-for="(item, index) in tiebreaker.playerlist" :key="index" :operateWidth="70">
+      <i-swipeout v-for="(item, index) in tiebreaker.playerlist" :key="index" :operateWidth="70" :disabled="item.isdrop == 1">
         <div slot="content">
           <div :class="item.isdrop === 1 ? 'pmps grey':'pmps'">{{item.pmps}}</div>
 
@@ -198,7 +198,7 @@
           class="_input _input_modal"
           style="margin-top: 5px;"
           type="number"
-          focus
+          :focus="beginModal"
           :placeholder="t.tiebreaker.total_round_desc"
           :value="totalrounds"
           @input="onInputTotalRounds"
@@ -570,7 +570,14 @@ export default {
     onDeletePlayer (e) {
       if (e.mp.currentTarget.dataset.id) {
         this.selectedId = e.mp.currentTarget.dataset.id
-        this.visDeletePlayer = true
+        for (let i = 0; i < this.tiebreaker.playerlist.length; i++) {
+          if (this.selectedId === this.tiebreaker.playerlist[i].id) {
+            if (this.tiebreaker.playerlist[i].isdrop === 0) {
+              this.visDeletePlayer = true
+              break
+            }
+          }
+        }
       }
     },
     onClickItem (e) {
@@ -587,9 +594,26 @@ export default {
         } else {
           // drop
           for (let i = 0; i < this.tiebreaker.playerlist.length; i++) {
-            if (this.selectedId === this.tiebreaker.playerlist[i].id) {
-              this.tiebreaker.playerlist[i].isdrop = 1
-              this.$store.commit('setTiebreaker', this.tiebreaker)
+            let player = this.tiebreaker.playerlist[i]
+            if (this.selectedId === player.id) {
+              if (player.isdrop === 0) {
+                for (let j = 0; j < this.tiebreaker.matchlist.length; j++) {
+                  let match = this.tiebreaker.matchlist[j]
+                  if (match.roundno === this.tiebreaker.roundno && ((match.player1 === player.playerName) || (match.player2 === player.playerName))) {
+                    if (match.games_player1 + match.games_player2 + match.games_drawn === 0) {
+                      // let op win
+                      if (match.player1 === player.playerName) {
+                        this.addMatchResult(match, 0, 2, 0)
+                      } else {
+                        this.addMatchResult(match, 2, 0, 0)
+                      }
+                    }
+                    break
+                  }
+                }
+                player.isdrop = 1
+                this.$store.commit('setTiebreaker', this.tiebreaker)
+              }
               break
             }
           }
