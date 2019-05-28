@@ -16,67 +16,44 @@
         <div class="activeplayers">{{t.tiebreaker.activeplayers}}: {{tiebreaker.playerlist.length}}</div>
         <div class="addhis" @click="onAddhis">{{t.tiebreaker.addhis}}</div>
       </div>
-      <input
-        class="_input input_playername"
-        :placeholder="t.tiebreaker.placeholder"
-        :value="playerName"
-        @input="onInput"
-      >
-      <i-button
-        type="primary"
-        shape="circle"
-        size="small"
-        @click="onAddPlayer"
-      >{{t.tiebreaker.enroll}}</i-button>
-      <i-button
-        type="ghost"
-        shape="circle"
-        size="small"
-        @click="onFillRandom"
-        :disabled="tiebreaker.roundno>0"
-      >{{t.tiebreaker.fillplayer}}</i-button>
+      <input class="_input input_playername" :placeholder="t.tiebreaker.placeholder" :value="playerName" @input="onInput">
+      <i-button type="primary" shape="circle" size="small" @click="onAddPlayer">{{t.tiebreaker.enroll}}</i-button>
+      <i-button type="ghost" shape="circle" size="small" @click="onFillRandom" :disabled="tiebreaker.roundno>0">{{t.tiebreaker.fillplayer}}</i-button>
       <div class="flex-space"></div>
       <i-button type="primary" size="small" @click="onMainButton">{{tiebreaker.roundno==0 ? t.tiebreaker.endenroll : tiebreaker.totalrounds == tiebreaker.roundno ? t.tiebreaker.endgame : t.tiebreaker.nextround}}</i-button>
       <i-button type="error" size="small" @click="onReset">{{t.tiebreaker.reset}}</i-button>
       <i-drawer mode="right" :visible="visDrawer" :mask-closable="false">
-        <div
-          class="flex-fullheight drawer-container"
-          :style="{width: '80vw', 'padding-top': (sysinfo.headAreaHeight + 10 + sysinfo.headAreaMarTop + sysinfo.statusBarHeight) * sysinfo.pixelRatio + 'px'}"
-        >
+        <div class="flex-fullheight drawer-container" :style="{width: '80vw', 'padding-top': (sysinfo.headAreaHeight + 10 + sysinfo.headAreaMarTop + sysinfo.statusBarHeight) * sysinfo.pixelRatio + 'px'}">
           <scroll-view scroll-y :style="{height: sysinfo.containersHeight + 'px'}">
-            <div class="flex-fullheight">
+            <div class="flex-fullheight" v-if="drawerType == 0">
               <i-checkbox-group :current="hisplayer" @change="onHischange">
-                <i-checkbox
-                  v-for="(item, index) in listHisplayer"
-                  :key="index"
-                  position="left"
-                  :value="item.name"
-                  :disabled="item.disabled"
-                ></i-checkbox>
+                <i-checkbox v-for="(item, index) in listHisplayer" :key="index" position="left" :value="item.name" :disabled="item.disabled"></i-checkbox>
               </i-checkbox-group>
               <div class="flex-space"></div>
-              <i-button
-                type="primary"
-                shape="circle"
-                size="small"
-                :disabled="hisplayer.length==0"
-                @click="onAddSelectedHis"
-              >{{t.tiebreaker.addSelected}}</i-button>
-              <i-button
-                type="ghost"
-                shape="circle"
-                size="small"
-                @click="visDrawer=false; hisplayer=[]"
-              >{{t.common.cancel}}</i-button>
+              <i-button type="primary" shape="circle" size="small" :disabled="hisplayer.length==0" @click="onAddSelectedHis">{{t.tiebreaker.addSelected}}</i-button>
+              <i-button type="ghost" shape="circle" size="small" @click="visDrawer=false; hisplayer=[]">{{t.common.cancel}}</i-button>
               <div class="div_space">
-                <i-button
-                  type="error"
-                  shape="circle"
-                  size="small"
-                  :disabled="hisplayer.length==0"
-                  @click="onDelSelectedHis"
-                >{{t.tiebreaker.delSelected}}</i-button>
+                <i-button type="error" shape="circle" size="small" :disabled="hisplayer.length==0" @click="onDelSelectedHis">{{t.tiebreaker.delSelected}}</i-button>
               </div>
+            </div>
+
+            <div class="flex-fullheight" v-if="drawerType == 1">
+              <div>
+                <div>{{score.player1}}</div>
+                <div><i-input-number :value="score.wins1" min="0" max="2" @change="onP1Change"/></div>
+              </div>
+              <div>
+                <div>{{score.player2}}</div>
+                <div><i-input-number :value="score.wins2" min="0" max="2" @change="onP2Change"/></div>
+              </div>
+              <div>
+                <div>平局</div>
+                <div><i-input-number :value="score.drawn" min="0" max="3" @change="onDrawnChange"/></div>
+              </div>
+
+              <div class="flex-space"></div>
+              <i-button type="primary" shape="circle" size="small" @click="onConfirmScore">{{t.common.confirm}}</i-button>
+              <i-button type="ghost" shape="circle" size="small" @click="visDrawer=false;">{{t.common.cancel}}</i-button>
             </div>
           </scroll-view>
         </div>
@@ -145,7 +122,12 @@
         <div class="roundTitle">{{currRound}}</div>
         <div>
           <div v-for="(item, index) in tiebreaker.matchlist" :key="index" class="cardMain">
-            <wux-card v-if="item.roundno === tiebreaker.roundno" :title="t.tiebreaker.table + ': ' + (item.counter + 1)" :extra="item.games_player1 + ' / ' + item.games_player2 + ' / ' + item.games_drawn">
+            <wux-card 
+              v-if="item.roundno === tiebreaker.roundno" 
+              :data-ident="item.ident" :data-pa="item.player1" :data-pb="item.player2" :data-wina="item.games_player1" :data-winb="item.games_player2" :data-drawn="item.games_drawn"
+              :title="t.tiebreaker.table + ': ' + (item.counter + 1)" 
+              :extra="item.games_player1 + ' / ' + item.games_player2 + ' / ' + item.games_drawn"
+              @click="onClickCard">
               <div slot="body" class="cardBody">
                 <div class="cardBody_item">
                   <div class="winnerLogo" v-if="item.games_player1 > item.games_player2">
@@ -198,8 +180,7 @@
       :title="t.tiebreaker.total_round_title"
       :visible="beginModal"
       :actions="beginAct"
-      @clickItem="handleBegin"
-    >
+      @clickItem="handleBegin">
       <div>{{t.tiebreaker.total_round_desc}}</div>
       <div style="display: flex; width: 100%; justify-content: center;">
         <input
@@ -209,8 +190,7 @@
           :focus="beginModal"
           :placeholder="t.tiebreaker.total_round_desc"
           :value="totalrounds"
-          @input="onInputTotalRounds"
-        >
+          @input="onInputTotalRounds">
       </div>
     </i-modal>
   </div>
@@ -331,11 +311,20 @@ export default {
       visModal: false,
       beginModal: false,
       visDeletePlayer: false,
+      drawerType: 0,
       visDrawer: false,
       selectedId: 0,
       modalType: 0,
       hisplayer: [],
-      totalrounds: ''
+      totalrounds: '',
+      score: {
+        ident: '',
+        player1: '',
+        player2: '',
+        wins1: 0,
+        wins2: 0,
+        drawn: 0
+      }
     }
   },
   computed: {
@@ -431,13 +420,13 @@ export default {
       'i-cell-group': '../../../static/iview/cell-group/index',
       'i-checkbox': '../../../static/iview/checkbox/index',
       'i-checkbox-group': '../../../static/iview/checkbox-group/index',
+      'i-input-number': '../../../static/iview/input-number/index',
       'wux-prompt': '../../../static/wux/prompt/index',
       'wux-segmented-control': '../../../static/wux/segmented-control/index',
       'wux-card': '../../../static/wux/card/index'
     }
   },
   onLoad (options) {
-    console.log(options)
     mta.Page.init()
     if (options && options.source) {
       doRequest('tiebreaker/getdata', {source: options.source}, (result) => {
@@ -825,6 +814,24 @@ export default {
           this.currentTab = 'tabResult'
         }
       }
+    },
+    onClickCard (e) {
+      if (e.mp.currentTarget.dataset) {
+        let data = e.mp.currentTarget.dataset
+        if (data.pb && data.pb !== 'BYE' && data.pb !== 'LOSE') {
+          this.score.ident = data.ident
+          this.score.player1 = data.pa
+          this.score.player2 = data.pb
+          this.score.wins1 = data.wina
+          this.score.wins2 = data.winb
+          this.score.drawn = data.drawn
+          this.drawerType = 1
+          this.visDrawer = true
+        }
+      }
+    },
+    onConfirmScore (e) {
+      console.log(e)
     },
     onChangeOrder (e) {
       let ordertype = 0
