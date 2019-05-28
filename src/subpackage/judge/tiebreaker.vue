@@ -22,42 +22,6 @@
       <div class="flex-space"></div>
       <i-button type="primary" size="small" @click="onMainButton">{{tiebreaker.roundno==0 ? t.tiebreaker.endenroll : tiebreaker.totalrounds == tiebreaker.roundno ? t.tiebreaker.endgame : t.tiebreaker.nextround}}</i-button>
       <i-button type="error" size="small" @click="onReset">{{t.tiebreaker.reset}}</i-button>
-      <i-drawer mode="right" :visible="visDrawer" :mask-closable="false">
-        <div class="flex-fullheight drawer-container" :style="{width: '80vw', 'padding-top': (sysinfo.headAreaHeight + 10 + sysinfo.headAreaMarTop + sysinfo.statusBarHeight) * sysinfo.pixelRatio + 'px'}">
-          <scroll-view scroll-y :style="{height: sysinfo.containersHeight + 'px'}">
-            <div class="flex-fullheight" v-if="drawerType == 0">
-              <i-checkbox-group :current="hisplayer" @change="onHischange">
-                <i-checkbox v-for="(item, index) in listHisplayer" :key="index" position="left" :value="item.name" :disabled="item.disabled"></i-checkbox>
-              </i-checkbox-group>
-              <div class="flex-space"></div>
-              <i-button type="primary" shape="circle" size="small" :disabled="hisplayer.length==0" @click="onAddSelectedHis">{{t.tiebreaker.addSelected}}</i-button>
-              <i-button type="ghost" shape="circle" size="small" @click="visDrawer=false; hisplayer=[]">{{t.common.cancel}}</i-button>
-              <div class="div_space">
-                <i-button type="error" shape="circle" size="small" :disabled="hisplayer.length==0" @click="onDelSelectedHis">{{t.tiebreaker.delSelected}}</i-button>
-              </div>
-            </div>
-
-            <div class="flex-fullheight" v-if="drawerType == 1">
-              <div>
-                <div>{{score.player1}}</div>
-                <div><i-input-number :value="score.wins1" min="0" max="2" @change="onP1Change"/></div>
-              </div>
-              <div>
-                <div>{{score.player2}}</div>
-                <div><i-input-number :value="score.wins2" min="0" max="2" @change="onP2Change"/></div>
-              </div>
-              <div>
-                <div>平局</div>
-                <div><i-input-number :value="score.drawn" min="0" max="3" @change="onDrawnChange"/></div>
-              </div>
-
-              <div class="flex-space"></div>
-              <i-button type="primary" shape="circle" size="small" @click="onConfirmScore">{{t.common.confirm}}</i-button>
-              <i-button type="ghost" shape="circle" size="small" @click="visDrawer=false;">{{t.common.cancel}}</i-button>
-            </div>
-          </scroll-view>
-        </div>
-      </i-drawer>
     </div>
 
     <div class="flex-fullheight" v-if="currentTab == 'tabPlayer'">
@@ -158,7 +122,7 @@
         </div>
         <div class="flex-space"></div>
         <i-button type="primary" size="small" @click="onMainButton">{{tiebreaker.roundno == tiebreaker.totalrounds ? t.tiebreaker.endgame : t.tiebreaker.nextround}}</i-button>
-        <i-button type="ghost" size="small" @click="onAdjustPairing">{{t.tiebreaker.adjust_pairing}}</i-button>
+        <!-- <i-button type="ghost" size="small" @click="onAdjustPairing">{{t.tiebreaker.adjust_pairing}}</i-button> -->
         <div class="div_space">
           <i-button type="error" size="small" @click="onDeletePairing">{{t.tiebreaker.delete_pairing}}</i-button>
         </div>
@@ -171,6 +135,48 @@
         class="description"
       >Based on TiebreakerJS by Johannes Kühnel (https://www.kraken.at/), partial modified, licensed under CC BY-NC-SA 4.0. https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh</div>
     </div>
+
+  <i-drawer mode="right" :visible="visDrawer" :mask-closable="false">
+    <div class="flex-fullheight drawer-container" :style="{width: drawerType == 0 ? '80vw' : '60vw', 'padding-top': (sysinfo.headAreaHeight + 10 + sysinfo.headAreaMarTop + sysinfo.statusBarHeight) * sysinfo.pixelRatio + 'px'}">
+      <scroll-view scroll-y :style="{height: sysinfo.containersHeight + 'px'}">
+        <div class="flex-fullheight" v-if="drawerType == 0">
+          <i-checkbox-group :current="hisplayer" @change="onHischange">
+            <i-checkbox v-for="(item, index) in listHisplayer" :key="index" position="left" :value="item.name" :disabled="item.disabled"></i-checkbox>
+          </i-checkbox-group>
+          <div class="flex-space"></div>
+          <i-button type="primary" shape="circle" size="small" :disabled="hisplayer.length==0" @click="onAddSelectedHis">{{t.tiebreaker.addSelected}}</i-button>
+          <i-button type="ghost" shape="circle" size="small" @click="visDrawer=false; hisplayer=[]">{{t.common.cancel}}</i-button>
+          <div class="div_space">
+            <i-button type="error" shape="circle" size="small" :disabled="hisplayer.length==0" @click="onDelSelectedHis">{{t.tiebreaker.delSelected}}</i-button>
+          </div>
+        </div>
+
+        <div class="flex-fullheight" v-if="drawerType == 1">
+          <div class="scoreName">{{score.player1}}</div>
+          <div class="scoreValue"><i-input-number :value="score.wins1" min="0" max="2" @change="onP1Change"/></div>
+          <div class="scoreName">{{score.player2}}</div>
+          <div class="scoreValue"><i-input-number :value="score.wins2" min="0" max="2" @change="onP2Change"/></div>
+          <div class="scoreName">{{t.tiebreaker.draws}}</div>
+          <div class="scoreValue"><i-input-number :value="score.drawn" min="0" max="3" @change="onDrawnChange"/></div>
+          <div class="flex-space"></div>
+          <div style="display: flex; justify-content: space-around; margin-bottom: 10px">
+            <i-button type="warning" data-p1="2" data-p2="0" long="true" inline="true" size="small" shape="circle" @click="onQuickScore">2-0</i-button>
+            <i-button type="warning" data-p1="2" data-p2="1" long="true" inline="true" size="small" shape="circle" @click="onQuickScore">2-1</i-button>
+            <i-button type="warning" data-p1="1" data-p2="0" long="true" inline="true" size="small" shape="circle" @click="onQuickScore">1-0</i-button>
+          </div>
+          <div style="display: flex; justify-content: space-around">
+            <i-button type="warning" data-p1="0" data-p2="2" long="true" inline="true" size="small" shape="circle" @click="onQuickScore">0-2</i-button>
+            <i-button type="warning" data-p1="1" data-p2="2" long="true" inline="true" size="small" shape="circle" @click="onQuickScore">1-2</i-button>
+            <i-button type="warning" data-p1="0" data-p2="1" long="true" inline="true" size="small" shape="circle" @click="onQuickScore">0-1</i-button>
+          </div>
+          <i-button type="primary" shape="circle" size="small" @click="onConfirmScore">{{t.common.confirm}}</i-button>
+          <div style="margin-bottom: 20px;">
+            <i-button type="ghost" shape="circle" size="small" @click="visDrawer=false;">{{t.common.cancel}}</i-button>
+          </div>
+        </div>
+      </scroll-view>
+    </div>
+  </i-drawer>
 
     <i-modal :visible="visModal" :actions="actModal" @clickItem="handleModal" :action-mode="modalType == 2 ? 'vertical' : 'horizontal'">
       <div>{{modalType == 0 ? t.tiebreaker.resetDesc : modalType == 2 ? t.tiebreaker.enroll_type : t.tiebreaker.deletePairingDesc}}</div>
@@ -830,8 +836,98 @@ export default {
         }
       }
     },
+    onP1Change (e) {
+      let num = e.mp.detail.value
+      if (typeof (num) !== 'number') {
+        num = parseInt(num, 10)
+        if (!num || isNaN(num)) {
+          num = 0
+        }
+      }
+      if (num < 0) {
+        num = 0
+      } else if (num > 2) {
+        num = 2
+      }
+      this.score.wins1 = num
+    },
+    onP2Change (e) {
+      let num = e.mp.detail.value
+      if (typeof (num) !== 'number') {
+        num = parseInt(num, 10)
+        if (!num || isNaN(num)) {
+          num = 0
+        }
+      }
+      if (num < 0) {
+        num = 0
+      } else if (num > 2) {
+        num = 2
+      }
+      this.score.wins2 = num
+    },
+    onDrawnChange (e) {
+      let num = e.mp.detail.value
+      if (typeof (num) !== 'number') {
+        num = parseInt(num, 10)
+        if (!num || isNaN(num)) {
+          num = 0
+        }
+      }
+      if (num < 0) {
+        num = 0
+      } else if (num > 3) {
+        num = 3
+      }
+      this.score.drawn = num
+    },
+    onQuickScore (e) {
+      if (e.mp.currentTarget.dataset) {
+        let p1 = e.mp.currentTarget.dataset.p1
+        let p2 = e.mp.currentTarget.dataset.p2
+        this.score.wins1 = parseInt(p1, 10)
+        this.score.wins2 = parseInt(p2, 10)
+        this.score.drawn = 0
+        this.onConfirmScore()
+      }
+    },
     onConfirmScore (e) {
-      console.log(e)
+      try {
+        let score = this.score
+        if (score.ident) {
+          let p1 = parseInt(score.wins1, 10)
+          let p2 = parseInt(score.wins2, 10)
+          let drawn = parseInt(score.drawn, 10)
+          if (!p1 || isNaN(p1) || p1 < 0) { p1 = 0 }
+          if (!p2 || isNaN(p2) || p2 < 0) { p2 = 0 }
+          if (!drawn || isNaN(drawn) || drawn < 0) { drawn = 0 }
+          if (p1 > 2) { p1 = 2 }
+          if (p2 > 2) { p2 = 2 }
+          if (drawn > 3) { drawn = 3 }
+          if (p1 > 2 || p1 < 0 || p2 > 2 || p2 < 0 || drawn < 0 || p1 + p2 > 3 || (p1 + p2 + drawn) < 1) {
+            $msg({
+              content: this.t.tiebreaker.invalid_score,
+              type: 'error'
+            })
+            return
+          }
+
+          let match = null
+          let flag = false
+          for (let i = this.tiebreaker.matchlist.length - 1; i >= 0; i--) {
+            match = this.tiebreaker.matchlist[i]
+            if (match.ident === score.ident) {
+              flag = true
+              break
+            }
+          }
+          if (flag) {
+            this.addMatchResult(match, p1, p2, drawn)
+          }
+        }
+      } finally {
+        this.visDrawer = false
+      }
     },
     onChangeOrder (e) {
       let ordertype = 0
@@ -1285,5 +1381,16 @@ export default {
 }
 .grey {
   background: #80848f;
+}
+.scoreName {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 20px;
+}
+.scoreValue {
+  display: flex;
+  justify-content: center;
 }
 </style>

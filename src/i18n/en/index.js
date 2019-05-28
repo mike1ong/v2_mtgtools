@@ -105,7 +105,9 @@ export default {
       adjust_pairing: 'Adjust pairing',
       delete_pairing: 'Delete pairing',
       add_with_bye: 'Grant Bye',
-      add_with_lose: 'Grant Loss'
+      add_with_lose: 'Grant Loss',
+      draws: 'Draws',
+      invalid_score: 'Invalid scores'
     }
   }
 }

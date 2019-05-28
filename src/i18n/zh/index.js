@@ -105,7 +105,9 @@ export default {
       adjust_pairing: '调整配对',
       delete_pairing: '删除当前配对',
       add_with_bye: '轮空',
-      add_with_lose: '一轮负'
+      add_with_lose: '一轮负',
+      draws: '平局',
+      invalid_score: '请输入有效的比分'
     }
   }
 }
