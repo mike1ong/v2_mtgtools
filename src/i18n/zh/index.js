@@ -22,13 +22,15 @@ export default {
       finish: '完成',
       pause: '暂停',
       restart: '重新开始',
-      home: '　  首页  　',
-      about: '　  关于  　',
+      home: '首页',
+      about: '关于',
       success: '执行成功',
       player: '牌手',
       details: '查看明细',
       delete: '删除',
-      drop: '退赛'
+      drop: '退赛',
+      newversion: '已有新版本',
+      newversion_tips: '新版本已经准备好，是否重启应用？'
     },
     suspendedplayer: {
       placeholder: '搜索',
@@ -62,8 +64,8 @@ export default {
     tiebreaker: {
       title: '瑞士轮配对',
       description: '可用于休闲赛事的瑞士轮配对工具',
-      standing: '　  排名  　',
-      pairing: '　  配对  　',
+      standing: '排名',
+      pairing: '配对',
       addplayer: '添加牌手：',
       activeplayers: '当前人数',
       addhis: '添加历史牌手',

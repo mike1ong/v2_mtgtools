@@ -22,13 +22,15 @@ export default {
       finish: 'Finish',
       pause: 'Pause',
       restart: 'Restart',
-      home: '  　Home  　',
-      about: '  　About  　',
+      home: 'Home',
+      about: 'About',
       success: 'success',
       player: 'Player',
       details: 'Detail',
       delete: 'Delete',
-      drop: 'Drop'
+      drop: 'Drop',
+      newversion: 'New version',
+      newversion_tips: 'New version is ready, reboot now?'
     },
     suspendedplayer: {
       placeholder: 'Search',
@@ -62,8 +64,8 @@ export default {
     tiebreaker: {
       title: 'TieBreaker',
       description: 'A swiss pairing tool for casual games.',
-      standing: '  　Standing  　',
-      pairing: '  　Pairing  　',
+      standing: 'Standing',
+      pairing: 'Pairing',
       addplayer: 'Enroll player：',
       activeplayers: 'Active ',
       addhis: 'Select player',

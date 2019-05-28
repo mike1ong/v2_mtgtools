@@ -2,10 +2,10 @@
   <div class="flex-fullheight">
     <mtHeader color="#353535" :showIcon="true"></mtHeader>
     <i-tabs :current="currentTab" @change="changeTab">
-      <i-tab key="tabHome" :title="t.common.home"></i-tab>
-      <i-tab key="tabPlayer" :title="t.tiebreaker.standing" :count="tiebreaker.playerlist.length"></i-tab>
-      <i-tab key="tabResult" :title="t.tiebreaker.pairing"></i-tab>
-      <i-tab key="tabAbout" :title="t.common.about"></i-tab>
+      <i-tab key="tabHome" :title="'　  ' + t.common.home + '  　'"></i-tab>
+      <i-tab key="tabPlayer" :title="'　  ' + t.tiebreaker.standing + '  　'" :count="tiebreaker.playerlist.length"></i-tab>
+      <i-tab key="tabResult" :title="'　  ' + t.tiebreaker.pairing + '  　'"></i-tab>
+      <i-tab key="tabAbout" :title="'　  ' + t.common.about + '  　'"></i-tab>
     </i-tabs>
 
     <div class="flex-fullheight tab-body" v-if="currentTab == 'tabHome'">
@@ -221,6 +221,7 @@ import mta from '../../utils/mta_analysis'
 import { mapState } from 'vuex'
 import mtHeader from '@/components/mtHeader'
 import { $msg, format } from '../../utils/index'
+import { doRequest } from '../../utils/websocket'
 // import { createPlayer } from './js/tiebreaker.js'
 let playerid = 100
 
@@ -338,7 +339,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['sysinfo', 'tiebreaker']),
+    ...mapState(['sysinfo', 'tiebreaker', 'userinfo']),
     t () {
       return this.$t('pub')
     },
@@ -435,8 +436,23 @@ export default {
       'wux-card': '../../../static/wux/card/index'
     }
   },
-  onLoad () {
+  onLoad (options) {
+    console.log(options)
     mta.Page.init()
+    if (options && options.source) {
+      doRequest('tiebreaker/getdata', {source: options.source}, (result) => {
+        if (result && result.playerlist && result.matchlist && result.playerlist.length > 0) {
+          if (result.openid && result.openid === this.userinfo.openid) {
+            return
+          }
+          this.tiebreaker.roundno = result.roundno
+          this.tiebreaker.playerlist = result.playerlist
+          this.tiebreaker.matchlist = result.matchlist
+          this.tiebreaker.totalrounds = result.totalrounds
+          this.tiebreaker.ordertype = result.ordertype
+        }
+      })
+    }
   },
   components: {
     mtHeader
@@ -1130,7 +1146,36 @@ export default {
       this.$store.commit('setTiebreaker', this.tiebreaker)
     }
   },
-  mounted () {}
+  mounted () {},
+  onShareAppMessage (obj) {
+    let randomid = Math.random().toString(36).substr(2)
+    let result = {
+      title: '',
+      path: '/subpackage/judge/teibreaker'
+    }
+    if (this.tiebreaker.roundno === 0) {
+      this.currentTab = 'tabPlayer'
+      result.title = 'MtgTools - ' + this.t.tiebreaker.standing
+    } else {
+      this.currentTab = 'tabResult'
+      result.title = 'MtgTools - ' + format(this.t.tiebreaker.rounds, this.tiebreaker.roundno) + ' ' + this.t.tiebreaker.pairing
+    }
+    if (this.tiebreaker.playerlist.length > 0 || this.tiebreaker.matchlist.length > 0) {
+      result.path += '?source=' + randomid
+      // doReq
+      let param = {
+        source: randomid,
+        openid: this.userinfo.openid,
+        roundno: this.tiebreaker.roundno,
+        totalrounds: this.tiebreaker.totalrounds,
+        ordertype: this.tiebreaker.ordertype,
+        playerlist: this.tiebreaker.playerlist,
+        matchlist: this.tiebreaker.matchlist
+      }
+      doRequest('tiebreaker/setdata', param)
+    }
+    return result
+  }
 }
 </script>
 
