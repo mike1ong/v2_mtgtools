@@ -25,11 +25,11 @@
             </i-grid-icon>
             <i-grid-label @click.stop="test">Grid</i-grid-label>
         </i-grid-item>
-        <i-grid-item>
-            <i-grid-icon>
-              <i class="ms ms-2b ms-cost"></i> 
+        <i-grid-item @click.stop="test2">
+            <i-grid-icon @click.stop="test2">
+              <span class="iconfont gridicon icon-user" @click.stop="test2"></span>
             </i-grid-icon>
-            <i-grid-label>Grid</i-grid-label>
+            <i-grid-label @click.stop="test2">Grid</i-grid-label>
         </i-grid-item>
       </i-grid>
 
@@ -177,6 +177,9 @@ export default {
     },
     test () {
       wx.navigateTo({url: '/subpackage/judge/tiebreaker'})
+    },
+    test2 () {
+      wx.navigateTo({url: '/subpackage/cards/cards'})
     }
   }
 }

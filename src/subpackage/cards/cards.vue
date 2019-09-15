@@ -1,23 +1,76 @@
 <template>
-  <div class="bodydiv">
+  <div class="flex-fullheight">
     <mtHeader color="#353535" :showIcon="true"></mtHeader>
-    <div class="upText">
-      <scroll-view id="s_view" scroll-y="true" :scroll-top="scrolltop" >
-        <div v-for="(item, index) in operList" :key="index" >
-          <div v-if="index>=operList.length-10">
-            {{index + 1}}:   + {{item}}
+    <i-tabs :current="currentTab" @change="changeTab">
+      <i-tab key="tabOracle" :title="'　  ORACLE  　'"></i-tab>
+    </i-tabs>
+
+    <div class="flex-fullheight" v-if="currentTab == 'tabOracle'">
+      <i-sticky :scrollTop="oracleScrollTop">
+        <i-sticky-item :fixedTop="sysinfo.headAreaHeight + 10 + sysinfo.headAreaMarTop + sysinfo.statusBarHeight+'px'" >
+          <div slot="title">Oracle text:</div>
+          <div slot="content">
+            <div style="padding: 10px; line-height: 1.5">
+              <div>Cave People</div>
+              <div>{1}{R}{R}</div>
+              <div>Creature — Human</div>
+              <div>Whenever Cave People attacks, it gets +1/-2 until end of turn.
+  {1}{R}{R}, {T}: Target creature gains mountainwalk until end of turn. (It can't be blocked as long as defending player controls a Mountain.)</div>
+            </div>
+
+            <div style="padding: 10px; line-height: 1.5">
+              <div>Cave People</div>
+              <div>{1}{R}{R}</div>
+              <div>Creature — Human</div>
+              <div>Whenever Cave People attacks, it gets +1/-2 until end of turn.
+  {1}{R}{R}, {T}: Target creature gains mountainwalk until end of turn. (It can't be blocked as long as defending player controls a Mountain.)</div>
+            </div>
+
           </div>
-        </div>
-      </scroll-view>
-      <div id="s_total">{{operTotal}}</div>
-    </div>
-    <div class="btnGroup">
-      <button data-func="reset" @click="doFunc" class="btnFunc">{{t.common.reset}}</button>
-      <button data-func="undo" @click="doFunc" class="btnFunc">{{t.common.revert}}</button>
-      <button data-num="1" @click="addNum" class="btnNum">+1</button>
-      <button data-num="2" @click="addNum" class="btnNum">+2</button>
-      <button data-num="3" @click="addNum" class="btnNum">+3</button>
-      <button data-num="4" @click="addNum" class="btnNum">+4</button>
+        </i-sticky-item>
+
+        <i-sticky-item :fixedTop="sysinfo.headAreaHeight + 10 + sysinfo.headAreaMarTop + sysinfo.statusBarHeight+'px'">
+          <div slot="title">Card-specific notes:</div>
+          <div slot="content">
+            <div style="padding: 10px; line-height: 1.5">
+              <div>Cave People</div>
+              <div>{1}{R}{R}</div>
+              <div>Creature — Human</div>
+              <div>Whenever Cave People attacks, it gets +1/-2 until end of turn.
+  {1}{R}{R}, {T}: Target creature gains mountainwalk until end of turn. (It can't be blocked as long as defending player controls a Mountain.)</div>
+            </div>
+
+            <div style="padding: 10px; line-height: 1.5">
+              <div>Cave People</div>
+              <div>{1}{R}{R}</div>
+              <div>Creature — Human</div>
+              <div>Whenever Cave People attacks, it gets +1/-2 until end of turn.
+  {1}{R}{R}, {T}: Target creature gains mountainwalk until end of turn. (It can't be blocked as long as defending player controls a Mountain.)</div>
+            </div>
+
+            <div style="padding: 10px; line-height: 1.5">
+              <div>Cave People</div>
+              <div>{1}{R}{R}</div>
+              <div>Creature — Human</div>
+              <div>Whenever Cave People attacks, it gets +1/-2 until end of turn.
+  {1}{R}{R}, {T}: Target creature gains mountainwalk until end of turn. (It can't be blocked as long as defending player controls a Mountain.)</div>
+            </div>
+
+            <div style="padding: 10px; line-height: 1.5">
+              <div>Cave People</div>
+              <div>{1}{R}{R}</div>
+              <div>Creature — Human</div>
+              <div>Whenever Cave People attacks, it gets +1/-2 until end of turn.
+  {1}{R}{R}, {T}: Target creature gains mountainwalk until end of turn. (It can't be blocked as long as defending player controls a Mountain.)</div>
+            </div>
+          </div>
+        </i-sticky-item>
+
+        <i-sticky-item :fixedTop="sysinfo.headAreaHeight + 10 + sysinfo.headAreaMarTop + sysinfo.statusBarHeight+'px'">
+          <div slot="title">Format legality:</div>
+          <div slot="content"></div>
+        </i-sticky-item>
+      </i-sticky>
     </div>
   </div>  
 </template>
@@ -31,9 +84,8 @@ export default {
   mpType: 'page',
   data () {
     return {
-      operTotal: 0,
-      operList: [],
-      scrolltop: 0
+      currentTab: 'tabOracle',
+      oracleScrollTop: 0
     }
   },
   computed: {
@@ -47,84 +99,33 @@ export default {
   config: {
     'usingComponents': {
       'i-drawer': '../../../static/iview/drawer/index',
-      'i-action-sheet': '../../../static/iview/action-sheet/index'
+      'i-action-sheet': '../../../static/iview/action-sheet/index',
+      'i-tabs': '../../../static/iview/tabs/index',
+      'i-tab': '../../../static/iview/tab/index',
+      'i-modal': '../../../static/iview/modal/index',
+      'i-message': '../../../static/iview/message/index',
+      'i-sticky': '../../../static/iview/sticky/index',
+      'i-sticky-item': '../../../static/iview/sticky-item/index'
     }
   },
   onLoad () {
     mta.Page.init()
   },
+  onPageScroll (event) {
+    console.log(this.oracleScrollTop)
+    this.oracleScrollTop = event.scrollTop
+  },
   components: {
     mtHeader
   },
   methods: {
-    addNum (event) {
-      var i = parseInt(event.target.dataset.num, 10)
-      this.operTotal += i
-      this.operList.push(i)
-      if (this.operTotal === 60) {
-        wx.vibrateLong({})
-      }
-      this.scrolltop = this.operList.length * 100
-    },
-    doFunc (event) {
-      if (event.target.dataset.func === 'reset') {
-        this.operTotal = 0
-        this.operList = []
-      } else {
-        if (this.operList.length > 0) {
-          let i = this.operList.pop()
-          this.operTotal -= i
-          this.scrolltop = this.operList.length * 100
-        }
-      }
+    changeTab (e) {
+      this.currentTab = e.mp.detail.key
     }
   }
 }
 </script>
 
 <style scope>
-.bodydiv {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.btnGroup{
-  display: flex;
-  align-self: flex-end;
-  flex-wrap: wrap;
-  flex-direction: row;
-  width:100%;
-}
-button{
-  margin-bottom: 1rpx;
-}
-.btnNum{
-  width: 374rpx;
-  height: 200rpx;
-  font-size: 42px;
-}
-.btnFunc{
-  width: 374rpx;
-  height: 100rpx;
-}
-.upText{
-  width: 750rpx;
-  flex-grow: 1;
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  background-color: #353535;
-  padding-bottom: 20px;
-}
-#s_total{
-  color: #fff;
-  font-size: 72px;
-  padding-right: 10px;
-}
-#s_view{
-  padding:10px;
-  color: #fff;
-  font-size: 20px;
-  flex:1;
-}
+
 </style>

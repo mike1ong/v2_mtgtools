@@ -108,6 +108,9 @@ export default {
       add_with_lose: '一轮负',
       draws: '平局',
       invalid_score: '请输入有效的比分'
+    },
+    cards: {
+
     }
   }
 }
